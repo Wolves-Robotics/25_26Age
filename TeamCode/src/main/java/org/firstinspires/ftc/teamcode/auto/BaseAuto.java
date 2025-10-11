@@ -15,10 +15,12 @@ public abstract class BaseAuto extends OpMode {
         robot.initAuto();
         robot.initHardwareSelection();
 
-        setInitCommands();
+        robot.shootingSubsystem().setPidOn(true);
+
+        initStuff();
     }
 
-    protected abstract void setInitCommands();
+    protected abstract void initStuff();
 
     @Override
     public final void init_loop() {
@@ -29,15 +31,16 @@ public abstract class BaseAuto extends OpMode {
     public final void start() {
         robot.startMainLoop();
 
-        setMainCommands();
     }
-
-    protected abstract void setMainCommands();
 
     @Override
     public final void loop() {
+        mainLoop();
+
         robot.update();
     }
+
+    protected abstract void mainLoop();
 
     @Override
     public final void stop() {

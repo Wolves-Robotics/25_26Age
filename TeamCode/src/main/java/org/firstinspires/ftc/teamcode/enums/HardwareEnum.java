@@ -7,6 +7,6 @@ public enum HardwareEnum {
     backRight,
     turretMotor,
     flywheelMotor,
-    transferMotor,
+    intakeMotor,
     hoodServo
 }

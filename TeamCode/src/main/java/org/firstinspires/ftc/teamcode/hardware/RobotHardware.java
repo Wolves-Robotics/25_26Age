@@ -7,6 +7,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.parameters.ImuParameters;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -24,7 +25,8 @@ public class RobotHardware {
     List<LynxModule> allHubs;
 
     private final Follower follower;
-    private double yawOffset;
+
+    private final IMU imu;
 
 //    private final Limelight3A limelight;
 
@@ -39,18 +41,23 @@ public class RobotHardware {
 
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(new Pose(0, 0, 0));
-        yawOffset = 0;
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+        )));
 
 //        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         motorArrayList = new ArrayList<>();
-        motorArrayList.add(new Motor("frontLeft",    true,  true,  false, hardwareMap));
-        motorArrayList.add(new Motor("frontRight",   false, true,  false, hardwareMap));
-        motorArrayList.add(new Motor("backLeft",     true,  true,  false, hardwareMap));
-        motorArrayList.add(new Motor("backRight",    false, true,  false, hardwareMap));
-        motorArrayList.add(new Motor("turretMotor",  false, true,  true,  hardwareMap));
+        motorArrayList.add(new Motor("frontLeft",    true,  false, false, hardwareMap));
+        motorArrayList.add(new Motor("frontRight",   false, false, false, hardwareMap));
+        motorArrayList.add(new Motor("backLeft",     true,  false, false, hardwareMap));
+        motorArrayList.add(new Motor("backRight",    false, false, false, hardwareMap));
+        motorArrayList.add(new Motor("turretMotor",  true,  true,  true,  hardwareMap));
         motorArrayList.add(new Motor("flywheelMotor",true,  false, true,  hardwareMap));
-        motorArrayList.add(new Motor("intakeMotor",  false, false, true,  hardwareMap));
+        motorArrayList.add(new Motor("intakeMotor",  true,  true,  true,  hardwareMap));
 
 
         servoArrayList = new ArrayList<>();
@@ -78,19 +85,11 @@ public class RobotHardware {
     }
 
     public double getImuYaw() {
-        return (getRawYaw() + Math.PI + yawOffset) % 2*Math.PI;
-    }
-
-    public double getRawYaw() {
-        return follower.getHeading();
-    }
-
-    public double getYawOffset() {
-        return yawOffset;
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
     public void resetYaw() {
-        yawOffset = follower.getHeading();
+        imu.resetYaw();
     }
 
     public Follower getFollower() {

@@ -17,7 +17,7 @@ public class Robot {
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
-    private boolean initLoop = true;
+    private boolean initLoop = true, auto;
 
     private JoinedTelemetry telemetry;
     private GraphManager manager;
@@ -42,15 +42,21 @@ public class Robot {
         shootingSubsystem = new ShootingSubsystem(robotHardware);
 
         actions = new ArrayList<>();
+
+        auto = false;
     }
 
     public void initAuto() {
         HardwareSelection.reset();
         hardwareSelection = HardwareSelection.getInstance();
+
+        auto = true;
     }
 
     public void initTeleop() {
         hardwareSelection = HardwareSelection.getInstance();
+
+        auto = false;
     }
 
     public void initHardwareSelection() {
@@ -103,6 +109,14 @@ public class Robot {
         return robotHardware;
     }
 
+    public DriveSubsystem driveSubsystem() {
+        return driveSubsystem;
+    }
+
+    public ShootingSubsystem shootingSubsystem() {
+        return shootingSubsystem;
+    }
+
     public void update() {
         robotHardware.update();
 
@@ -115,14 +129,12 @@ public class Robot {
         if (initLoop) {
             hardwareSelection.updateTele(telemetry);
         } else {
-            driveSubsystem.update();
+            if (!auto) {
+                driveSubsystem.update();
+            }
             shootingSubsystem.update();
 
             shootingSubsystem.updatePanel(telemetry, manager);
-
-            telemetry.addData("Yaw Offset", Math.toDegrees(robotHardware.getYawOffset()));
-            telemetry.addData("Yaw", Math.toDegrees(robotHardware.getImuYaw()));
-            telemetry.addData("Raw Yaw", Math.toDegrees(robotHardware.getRawYaw()));
         }
 
         telemetry.update();
