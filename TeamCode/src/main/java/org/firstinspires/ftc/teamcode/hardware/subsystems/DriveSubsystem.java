@@ -12,6 +12,8 @@ public class DriveSubsystem {
 
     private boolean followingPath;
 
+    private boolean parking;
+
     private double x, y, rx;
 
     public DriveSubsystem(RobotHardware robotHardware) {
@@ -19,6 +21,8 @@ public class DriveSubsystem {
 
         follower = robotHardware.getFollower();
         followingPath = false;
+
+        parking = false;
 
         x  = 0;
         y  = 0;
@@ -36,6 +40,22 @@ public class DriveSubsystem {
 
     public boolean isFollowingPath() {
         return followingPath;
+    }
+
+    public void setParking(boolean parking) {
+        this.parking = parking;
+
+        if (parking) {
+            robotHardware.setMotorBrake(HardwareEnum.FORWARD_LEFT, true);
+            robotHardware.setMotorBrake(HardwareEnum.BACK_LEFT, true);
+            robotHardware.setMotorBrake(HardwareEnum.FORWARD_RIGHT, true);
+            robotHardware.setMotorBrake(HardwareEnum.BACK_RIGHT, true);
+        } else {
+            robotHardware.setMotorBrake(HardwareEnum.FORWARD_LEFT, false);
+            robotHardware.setMotorBrake(HardwareEnum.BACK_LEFT, false);
+            robotHardware.setMotorBrake(HardwareEnum.FORWARD_RIGHT, false);
+            robotHardware.setMotorBrake(HardwareEnum.BACK_RIGHT, false);
+        }
     }
 
     public void setDriveCoefficients(double x, double y, double rx) {
@@ -59,16 +79,18 @@ public class DriveSubsystem {
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator;
-            double backLeftPower = (rotY - rotX + rx) / denominator;
-            double frontRightPower = (rotY - rotX - rx) / denominator;
-            double backRightPower = (rotY + rotX - rx) / denominator;
+            double multiplier = parking ? 0.7 : 1;
 
-            robotHardware.setMotorPower(HardwareEnum.forwardLeft, frontLeftPower);
-            robotHardware.setMotorPower(HardwareEnum.backLeft, backLeftPower);
-            robotHardware.setMotorPower(HardwareEnum.forwardRight, frontRightPower);
-            robotHardware.setMotorPower(HardwareEnum.backRight, backRightPower);
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+            double frontLeftPower = (rotY + rotX + rx) / denominator * multiplier;
+            double backLeftPower = (rotY - rotX + rx) / denominator * multiplier;
+            double frontRightPower = (rotY - rotX - rx) / denominator * multiplier;
+            double backRightPower = (rotY + rotX - rx) / denominator * multiplier;
+
+            robotHardware.setMotorPower(HardwareEnum.FORWARD_LEFT, frontLeftPower);
+            robotHardware.setMotorPower(HardwareEnum.BACK_LEFT, backLeftPower);
+            robotHardware.setMotorPower(HardwareEnum.FORWARD_RIGHT, frontRightPower);
+            robotHardware.setMotorPower(HardwareEnum.BACK_RIGHT, backRightPower);
         }
     }
 }

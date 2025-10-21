@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.bylazar.graph.GraphManager;
 import com.bylazar.graph.PanelsGraph;
 import com.bylazar.telemetry.JoinedTelemetry;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.enums.HardwareEnum;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.ShootingSubsystem;
 import org.firstinspires.ftc.teamcode.utils.Action;
@@ -26,7 +29,7 @@ public class Robot {
     private DriveSubsystem    driveSubsystem;
     private ShootingSubsystem shootingSubsystem;
 
-    private HardwareSelection hardwareSelection;
+    private MatchSelection matchSelection;
 
     private ArrayList<Action> actions;
 
@@ -47,23 +50,23 @@ public class Robot {
     }
 
     public void initAuto() {
-        HardwareSelection.reset();
-        hardwareSelection = HardwareSelection.getInstance();
+        MatchSelection.reset();
+        matchSelection = MatchSelection.getInstance();
 
         auto = true;
     }
 
     public void initTeleop() {
-        hardwareSelection = HardwareSelection.getInstance();
+        matchSelection = MatchSelection.getInstance();
 
         auto = false;
     }
 
     public void initHardwareSelection() {
-        addAction(() -> gamepad1.dpad_up,    () -> hardwareSelection.decrementSelect());
-        addAction(() -> gamepad1.dpad_down,  () -> hardwareSelection.incrementSelect());
-        addAction(() -> gamepad1.dpad_right, () -> hardwareSelection.incrementSelected());
-        addAction(() -> gamepad1.dpad_left,  () -> hardwareSelection.decrementSelected());
+        addAction(() -> gamepad1.dpad_up,    () -> matchSelection.decrementSelect());
+        addAction(() -> gamepad1.dpad_down,  () -> matchSelection.incrementSelect());
+        addAction(() -> gamepad1.dpad_right, () -> matchSelection.incrementSelected());
+        addAction(() -> gamepad1.dpad_left,  () -> matchSelection.decrementSelected());
     }
 
     public void startMainLoop() {
@@ -71,7 +74,7 @@ public class Robot {
         clearActions();
     }
 
-    public void setDrivingAction() {
+    public void setDrivingActions() {
         addAction(() -> true,
                   () -> driveSubsystem.setDriveCoefficients(
                                             gamepad1.left_stick_x,
@@ -109,6 +112,10 @@ public class Robot {
         return robotHardware;
     }
 
+    public MatchSelection getMatchSelection() {
+        return matchSelection;
+    }
+
     public DriveSubsystem driveSubsystem() {
         return driveSubsystem;
     }
@@ -127,7 +134,7 @@ public class Robot {
 
         // telemety
         if (initLoop) {
-            hardwareSelection.updateTele(telemetry);
+            matchSelection.updateTele(telemetry);
         } else {
             if (!auto) {
                 driveSubsystem.update();
@@ -136,6 +143,8 @@ public class Robot {
 
             shootingSubsystem.updatePanel(telemetry, manager);
         }
+
+        telemetry.addData("encoder", robotHardware.getTurretAngle());
 
         telemetry.update();
         manager.update();

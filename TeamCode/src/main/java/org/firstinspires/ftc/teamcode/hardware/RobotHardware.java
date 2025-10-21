@@ -2,21 +2,19 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 
-import org.firstinspires.ftc.ftccommon.internal.manualcontrol.parameters.ImuParameters;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.enums.HardwareEnum;
 import org.firstinspires.ftc.teamcode.hardware.singleSystems.Motor;
 import org.firstinspires.ftc.teamcode.hardware.singleSystems.Servo;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.utils.GoBildaPinpointDriver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +26,13 @@ public class RobotHardware {
 
     private final IMU imu;
 
-//    private final Limelight3A limelight;
+    private final Limelight3A limelight;
 
     private final ArrayList<Motor> motorArrayList;
     private final ArrayList<Servo> servoArrayList;
+
+    private AnalogInput turretEncoder;
+    private double encoderOffset, encoderPosition;
 
     public RobotHardware(HardwareMap hardwareMap) {
 
@@ -48,7 +49,9 @@ public class RobotHardware {
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
         )));
 
-//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0);
+        limelight.start();
 
         motorArrayList = new ArrayList<>();
         motorArrayList.add(new Motor("frontLeft",    true,  false, false, hardwareMap));
@@ -59,9 +62,12 @@ public class RobotHardware {
         motorArrayList.add(new Motor("flywheelMotor",true,  false, true,  hardwareMap));
         motorArrayList.add(new Motor("intakeMotor",  true,  true,  true,  hardwareMap));
 
+        turretEncoder = hardwareMap.get(AnalogInput.class, "encoder");
+
 
         servoArrayList = new ArrayList<>();
         servoArrayList.add(new Servo("hoodServo", hardwareMap));
+        servoArrayList.add(new Servo("light", hardwareMap));
     }
 
     private Motor getMotor(HardwareEnum hardwareEnum) {
@@ -76,12 +82,20 @@ public class RobotHardware {
         return getMotor(hardwareEnum).getPosition();
     }
 
+    public void setMotorBrake(HardwareEnum hardwareEnum, boolean brake) {
+        getMotor(hardwareEnum).setBrake(brake);
+    }
+
     private Servo getServo(HardwareEnum hardwareEnum) {
-        return servoArrayList.get(hardwareEnum.ordinal() - HardwareEnum.hoodServo.ordinal());
+        return servoArrayList.get(hardwareEnum.ordinal() - HardwareEnum.HOOD_SERVO.ordinal());
     }
 
     public void setServoPosition(HardwareEnum hardwareEnum, double position) {
         getServo(hardwareEnum).setPosition(position);
+    }
+
+    public double getTurretAngle() {
+        return encoderPosition;
     }
 
     public double getImuYaw() {
@@ -96,11 +110,21 @@ public class RobotHardware {
         return follower;
     }
 
+    public LLResult getLLResult() {
+        return limelight.getLatestResult();
+    }
+
+    public void setPipeLine(int index) {
+        limelight.pipelineSwitch(index);
+    }
+
     public void update() {
         for (LynxModule hub: allHubs)
             hub.clearBulkCache();
 
         follower.update();
+
+        encoderPosition = AngleUnit.normalizeDegrees((turretEncoder.getVoltage()-0.043)/3.1*360 + encoderOffset);
 
         for (Motor m: motorArrayList)
             m.update();

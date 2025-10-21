@@ -32,6 +32,12 @@ public class Motor {
         setPower = power;
     }
 
+    public void setBrake(boolean brake) {
+        if (brake) motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        else motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+    }
+
     public int getPosition() {
         return position;
     }
