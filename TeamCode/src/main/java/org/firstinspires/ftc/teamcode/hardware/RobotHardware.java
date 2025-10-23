@@ -95,11 +95,11 @@ public class RobotHardware {
     }
 
     public double getTurretAngle() {
-        return encoderPosition;
+        return AngleUnit.normalizeDegrees(encoderPosition);
     }
 
     public void resetOffset() {
-        encoderOffset = encoderPosition;
+        encoderOffset = encoderPosition - encoderOffset;
     }
 
     public double getImuYaw() {
@@ -128,7 +128,7 @@ public class RobotHardware {
 
         follower.update();
 
-        encoderPosition = AngleUnit.normalizeDegrees((turretEncoder.getVoltage()-0.043)/3.1*360 + encoderOffset);
+        encoderPosition = (turretEncoder.getVoltage()-0.043)/3.1*360 + encoderOffset;
 
         for (Motor m: motorArrayList)
             m.update();
