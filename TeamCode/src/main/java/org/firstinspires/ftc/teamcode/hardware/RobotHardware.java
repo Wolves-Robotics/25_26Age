@@ -98,6 +98,10 @@ public class RobotHardware {
         return encoderPosition;
     }
 
+    public void resetOffset() {
+        encoderOffset = encoderPosition;
+    }
+
     public double getImuYaw() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }

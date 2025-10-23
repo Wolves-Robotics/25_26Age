@@ -31,7 +31,7 @@ public class Tele extends OpMode {
 
         switch (robot.getMatchSelection().getTeleOps()) {
             case COMPETITION:
-                teleInterface = new Competition();
+                teleInterface = new EncoderTest();
                 break;
             case TESTING:
                 teleInterface = new Testing();
