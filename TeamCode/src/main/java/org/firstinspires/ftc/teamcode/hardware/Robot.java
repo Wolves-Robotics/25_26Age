@@ -53,11 +53,15 @@ public class Robot {
         MatchSelection.reset();
         matchSelection = MatchSelection.getInstance();
 
+        robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
+
         auto = true;
     }
 
     public void initTeleop() {
         matchSelection = MatchSelection.getInstance();
+
+        robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
 
         auto = false;
     }
@@ -144,11 +148,15 @@ public class Robot {
             shootingSubsystem.updatePanel(telemetry, manager);
         }
 
+        telemetry.addData("busy", robotHardware.getFollower().isBusy());
+
+        telemetry.addData("x", robotHardware.getFollower().getPose().getX());
+        telemetry.addData("y", robotHardware.getFollower().getPose().getY());
+        telemetry.addData("heading", robotHardware.getFollower().getHeading());
+        telemetry.addData("turret position", robotHardware.getMotorPosition(HardwareEnum.TURRET_MOTOR));
         telemetry.addData("encoder", robotHardware.getTurretAngle());
 
         telemetry.update();
         manager.update();
     }
-
-
 }

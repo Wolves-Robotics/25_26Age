@@ -50,7 +50,7 @@ public class Auto extends OpMode {
 
         switch (robot.getMatchSelection().getAutos()) {
             case CLOSE_AUTO:
-                autoInterface = new CloseAuto();
+                autoInterface = new CloseAuto(robot);
                 break;
             case FAR_AUTO:
                 autoInterface = new FarAuto();

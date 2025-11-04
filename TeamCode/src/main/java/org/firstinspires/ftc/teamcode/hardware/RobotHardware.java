@@ -41,7 +41,7 @@ public class RobotHardware {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setPose(new Pose(0, 0, 0));
+        follower.setPose(new Pose(120, 127.7, Math.toRadians(37)));
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -54,13 +54,14 @@ public class RobotHardware {
         limelight.start();
 
         motorArrayList = new ArrayList<>();
-        motorArrayList.add(new Motor("frontLeft",    true,  false, false, hardwareMap));
-        motorArrayList.add(new Motor("frontRight",   false, false, false, hardwareMap));
-        motorArrayList.add(new Motor("backLeft",     true,  false, false, hardwareMap));
-        motorArrayList.add(new Motor("backRight",    false, false, false, hardwareMap));
-        motorArrayList.add(new Motor("turretMotor",  true,  true,  true,  hardwareMap));
-        motorArrayList.add(new Motor("flywheelMotor",true,  false, true,  hardwareMap));
-        motorArrayList.add(new Motor("intakeMotor",  true,  true,  true,  hardwareMap));
+        motorArrayList.add(new Motor("frontLeft",     true,  false, false, hardwareMap));
+        motorArrayList.add(new Motor("frontRight",    false, false, false, hardwareMap));
+        motorArrayList.add(new Motor("backLeft",      true,  false, false, hardwareMap));
+        motorArrayList.add(new Motor("backRight",     false, false, false, hardwareMap));
+        motorArrayList.add(new Motor("turretMotor",   true,  true,  true,  hardwareMap));
+        motorArrayList.add(new Motor("flywheelMotor", false, false, true,  hardwareMap));
+        motorArrayList.add(new Motor("flywheelMotor2",true,  false, true,  hardwareMap));
+        motorArrayList.add(new Motor("intakeMotor",   true,  true,  true,  hardwareMap));
 
         turretEncoder = hardwareMap.get(AnalogInput.class, "encoder");
 

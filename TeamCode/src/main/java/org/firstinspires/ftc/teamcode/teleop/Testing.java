@@ -10,16 +10,22 @@ public class Testing implements TeleInterface {
     @Override
     public void setInitCommands(Robot robot, Gamepad gamepad1, Gamepad gamepad2) {
         robot.addAction(
-                () -> gamepad1.a,
-                () -> robot.getRobotHardware().setPipeLine(1));
+                () -> gamepad1.left_bumper,
+                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.HOOD_SERVO, 0));
 
         robot.addAction(
-                () -> gamepad1.x,
-                () -> robot.getRobotHardware().setPipeLine(0));
+                () -> gamepad1.right_bumper,
+                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.HOOD_SERVO, 1));
 
         robot.addAction(
-                () -> gamepad1.b,
-                () -> robot.getRobotHardware().setPipeLine(2));
+                () -> true,
+                () -> robot.getRobotHardware().setMotorPower(HardwareEnum.FLYWHEEL_MOTOR, gamepad1.left_trigger),
+                true);
+
+        robot.addAction(
+                () -> true,
+                () -> robot.getRobotHardware().setMotorPower(HardwareEnum.FLYWHEEL_MOTOR2, gamepad1.right_trigger),
+                true);
     }
 
     @Override

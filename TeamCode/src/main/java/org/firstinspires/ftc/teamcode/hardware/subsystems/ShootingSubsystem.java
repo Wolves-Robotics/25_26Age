@@ -5,6 +5,7 @@ import com.bylazar.graph.GraphManager;
 import com.bylazar.telemetry.JoinedTelemetry;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,9 +16,11 @@ import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 public class ShootingSubsystem {
     private RobotHardware robotHardware;
 
-    private PIDFController pidController, limelightController;
-    public static double p = 0.0163, i = 0, d = 0.00175, lP = 0.014, lI = 0, lD = 0;
+    private PIDFController pidController;
+    public static double p = 0.0163, i = 0, d = 0.00175;
     public static int target = 0;
+
+    public Pose targetPose, currentPose;
 
     private int position = 0;
     private double power = 0;
@@ -47,7 +50,9 @@ public class ShootingSubsystem {
         this.robotHardware = robotHardware;
 
         pidController = new PIDFController(new PIDFCoefficients(p, i, d, 0));
-        limelightController = new PIDFController(new PIDFCoefficients(lP, lI, lD, 0));
+
+        targetPose = new Pose(142, 137.5);
+        currentPose = robotHardware.getFollower().getPose();
 
         pidOn = true;
 
@@ -131,8 +136,10 @@ public class ShootingSubsystem {
 
         if (speedUp) {
             robotHardware.setMotorPower(HardwareEnum.FLYWHEEL_MOTOR, power);
+            robotHardware.setMotorPower(HardwareEnum.FLYWHEEL_MOTOR2, power);
         } else {
             robotHardware.setMotorPower(HardwareEnum.FLYWHEEL_MOTOR, 0);
+            robotHardware.setMotorPower(HardwareEnum.FLYWHEEL_MOTOR2, 0);
             robotHardware.setMotorPower(HardwareEnum.INTAKE_MOTOR, 0);
         }
     }
@@ -166,12 +173,31 @@ public class ShootingSubsystem {
         double seconds = deltaTime.seconds();
 
         if (pidOn) {
-            LLResult result = robotHardware.getLLResult();
-            sensing = result != null && result.isValid();
-            if (sensing) {
+            currentPose = robotHardware.getFollower().getPose();
 
-                robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, result.getTx() * 0.014);
+            double relativeAngle = Math.atan2(
+                    (targetPose.getY() - currentPose.getY()),
+                    (targetPose.getX() - currentPose.getX()));
+            double shootingAngle = (relativeAngle - currentPose.getHeading() + Math.PI)
+                    % (2 * Math.PI);
 
+            target = Math.toIntExact(Math.round((-55.51324 * shootingAngle) + 351));
+
+
+            pidController.setCoefficients(new PIDFCoefficients(p, i, d, 0));
+
+            position = robotHardware.getMotorPosition(HardwareEnum.TURRET_MOTOR);
+            pidController.updatePosition(position);
+            pidController.setTargetPosition(target);
+            power = pidController.run();
+            robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, power);
+
+//            LLResult result = robotHardware.getLLResult();
+//            sensing = result != null && result.isValid();
+//            if (sensing) {
+//
+//                robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, result.getTx() * 0.014);
+//
 //                limelightController.setCoefficients(new PIDFCoefficients(lP, lI, lD, 0));
 //;
 //                limelightController.updatePosition(0);
@@ -181,8 +207,8 @@ public class ShootingSubsystem {
 //                robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, power);
 //
 //                pidController.run();
-
-            } else {
+//
+//            } else {
 //                pidController.setCoefficients(new PIDFCoefficients(p, i, d, 0));
 //
 //                position = robotHardware.getMotorPosition(HardwareEnum.TURRET_MOTOR);
@@ -192,9 +218,9 @@ public class ShootingSubsystem {
 //                robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, power);
 //
 //                limelightController.run();
-                robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, 0);
-
-            }
+//                robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, 0);
+//
+//            }
 
             if (speedUp) {
                 previousFlywheelPosition = flywheelPosition;
@@ -207,7 +233,7 @@ public class ShootingSubsystem {
         }
 
         if (firing) {
-            if (staggering && staggerTime.milliseconds() > 500) {
+            if (staggering && staggerTime.milliseconds() > 250) {
                 robotHardware.setMotorPower(HardwareEnum.INTAKE_MOTOR, 1);
                 staggerTime.reset();
                 staggering = false;
