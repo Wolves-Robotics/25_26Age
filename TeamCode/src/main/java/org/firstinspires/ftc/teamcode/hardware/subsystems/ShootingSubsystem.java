@@ -16,14 +16,15 @@ import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 public class ShootingSubsystem {
     private RobotHardware robotHardware;
 
-    private PIDFController pidController;
-    public static double p = 0.0163, i = 0, d = 0.00175;
+    private PIDFController pidController, primaryVeloPid, secondaryVeloPid;
+    public static double p = 0.0163, i = 0, d = 0.00175, pp = 0, pd = 0, pf = 0, sp = 0, sd = 0, sf = 0;
+    public static double vSwitch = 50, targetVelo = 0;
     public static int target = 0;
 
     public Pose targetPose, currentPose;
 
     private int position = 0;
-    private double power = 0;
+    private double power = 0, velocity = 0, veloPower = 0;
 
     private double intakePower;
 
@@ -50,6 +51,8 @@ public class ShootingSubsystem {
         this.robotHardware = robotHardware;
 
         pidController = new PIDFController(new PIDFCoefficients(p, i, d, 0));
+        primaryVeloPid = new PIDFController(new PIDFCoefficients(pp, 0, pd, pf));
+        secondaryVeloPid = new PIDFController(new PIDFCoefficients(sp, 0, sd, sf));
 
         targetPose = new Pose(142, 137.5);
         currentPose = robotHardware.getFollower().getPose();
@@ -72,6 +75,10 @@ public class ShootingSubsystem {
         flywheelVelocity = 0;
 
         deltaTime = new ElapsedTime();
+    }
+
+    public void setTargetVelo(double velo) {
+        targetVelo = velo;
     }
 
     public void setPidOn(boolean pidOn) {
@@ -199,7 +206,7 @@ public class ShootingSubsystem {
 //                robotHardware.setMotorPower(HardwareEnum.TURRET_MOTOR, result.getTx() * 0.014);
 //
 //                limelightController.setCoefficients(new PIDFCoefficients(lP, lI, lD, 0));
-//;
+//
 //                limelightController.updatePosition(0);
 //                tX = result.getTx();
 //                limelightController.setTargetPosition(tX);
@@ -222,14 +229,22 @@ public class ShootingSubsystem {
 //
 //            }
 
-            if (speedUp) {
-                previousFlywheelPosition = flywheelPosition;
-                flywheelPosition = robotHardware.getMotorPosition(HardwareEnum.FLYWHEEL_MOTOR);
+            if (!speedUp) {
+                primaryVeloPid.setCoefficients(new PIDFCoefficients(pp, 0, pd, pf));
+                secondaryVeloPid.setCoefficients(new PIDFCoefficients(sp, 0, sd, sf));
 
-                flywheelVelocity = (double) (flywheelPosition - previousFlywheelPosition) / seconds;
+                velocity = robotHardware.getMotorVelocity(HardwareEnum.FLYWHEEL_MOTOR);
 
+                if (Math.abs(targetVelo - velocity) > vSwitch) {
+                    primaryVeloPid.updateError(targetVelo - velocity);
+                    veloPower = primaryVeloPid.run();
+                } else {
+                    secondaryVeloPid.updateError(targetVelo - velocity);
+                    veloPower = secondaryVeloPid.run();
+                }
+                robotHardware.setMotorPower(HardwareEnum.FLYWHEEL_MOTOR,  veloPower);
+                robotHardware.setMotorPower(HardwareEnum.FLYWHEEL_MOTOR2, veloPower);
             }
-            deltaTime.reset();
         }
 
         if (firing) {
@@ -254,9 +269,9 @@ public class ShootingSubsystem {
         joinedTelemetry.addData("sensing", sensing);
         joinedTelemetry.addData("Tx", tX);
 
-        joinedTelemetry.addData("Flywheel Velocity", flywheelVelocity);
-        joinedTelemetry.addData("Position", flywheelPosition);
-        joinedTelemetry.addData("Prev Position", previousFlywheelPosition);
+        joinedTelemetry.addData("Flywheel Velocity", robotHardware.getMotorVelocity(HardwareEnum.FLYWHEEL_MOTOR));
+        joinedTelemetry.addData("Flywheel Power",    veloPower);
+        joinedTelemetry.addData("Flywheel Target",   targetVelo);
 
         manager.addData("Position", position);
         manager.addData("Target", target);

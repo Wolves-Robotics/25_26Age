@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.hardware.singleSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Motor {
-    private DcMotor motor;
+    private DcMotorEx motor;
 
     private boolean voltage;
 
@@ -15,7 +16,7 @@ public class Motor {
     private double setPower;
 
     public Motor(String name, boolean reverse, boolean brake, boolean voltage, HardwareMap hardwareMap) {
-        motor = hardwareMap.dcMotor.get(name);
+        motor = hardwareMap.get(DcMotorEx.class, name);
 
         motor.setDirection(reverse ?
                 DcMotorSimple.Direction.REVERSE:
@@ -40,6 +41,10 @@ public class Motor {
 
     public int getPosition() {
         return position;
+    }
+
+    public double getVelocity() {
+        return motor.getVelocity();
     }
 
     public void update() {

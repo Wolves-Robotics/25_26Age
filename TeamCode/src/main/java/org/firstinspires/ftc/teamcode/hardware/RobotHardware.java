@@ -83,6 +83,10 @@ public class RobotHardware {
         return getMotor(hardwareEnum).getPosition();
     }
 
+    public double getMotorVelocity(HardwareEnum hardwareEnum) {
+        return getMotor(hardwareEnum).getVelocity();
+    }
+
     public void setMotorBrake(HardwareEnum hardwareEnum, boolean brake) {
         getMotor(hardwareEnum).setBrake(brake);
     }
