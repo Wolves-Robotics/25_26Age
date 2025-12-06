@@ -15,9 +15,9 @@ public class Competition implements TeleInterface{
         robot.setDrivingActions();
 
         robot.addAction(
-                () -> true,
-                () -> robot.shootingSubsystem().setIntaking(gamepad1.right_trigger),
-                true);
+                () -> gamepad1.right_trigger > 0.75,
+                () -> robot.shootingSubsystem().setIntaking(true),
+                () -> robot.shootingSubsystem().setIntaking(false));
 
         robot.addAction(
                 () -> gamepad1.x,
@@ -29,33 +29,20 @@ public class Competition implements TeleInterface{
                 () -> robot.driveSubsystem().setParking(true),
                 () -> robot.driveSubsystem().setParking(false));
 
-
-//        robot.addAction(
-//                () -> true,
-//                () -> robot.shootingSubsystem().setTurretPower(gamepad2.left_stick_x),
-//                true);
-
         robot.addAction(
-                () -> gamepad2.dpad_left,
-                () -> robot.shootingSubsystem().setTarget(67));
+                () -> gamepad1.share,
+                () -> robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getTeamColor()));
 
-        robot.addAction(
-                () -> gamepad2.dpad_up,
-                () -> robot.shootingSubsystem().setTarget(167));
-
-        robot.addAction(
-                () -> gamepad2.dpad_right,
-                () -> robot.shootingSubsystem().setTarget(284));
 
 
         robot.addAction(
                 () -> gamepad2.left_bumper,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 0.8),
+                () -> robot.shootingSubsystem().setSpeedUp(true, 1660),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(
                 () -> gamepad2.left_trigger > 0.75,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 1),
+                () -> robot.shootingSubsystem().setSpeedUp(true, 2100),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(

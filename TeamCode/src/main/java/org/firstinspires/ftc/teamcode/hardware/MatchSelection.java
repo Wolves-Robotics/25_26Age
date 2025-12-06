@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.pedropathing.geometry.Pose;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.enums.Autos;
 import org.firstinspires.ftc.teamcode.enums.Color;
@@ -28,6 +30,7 @@ public class MatchSelection {
     private Autos autos;
     private TeleOps teleOps;
     private Color teamColor;
+    private Pose lastPose;
 
     // Default values should be defined here
     public MatchSelection() {
@@ -35,6 +38,16 @@ public class MatchSelection {
         autos = Autos.CLOSE_AUTO;
         teleOps = TeleOps.COMPETITION;
         teamColor = Color.RED;
+
+        lastPose = new Pose();
+    }
+
+    public void setLastPose(Pose lastPose) {
+        this.lastPose = lastPose;
+    }
+
+    public Pose getLastPose() {
+        return lastPose;
     }
 
     // Increments what is selected

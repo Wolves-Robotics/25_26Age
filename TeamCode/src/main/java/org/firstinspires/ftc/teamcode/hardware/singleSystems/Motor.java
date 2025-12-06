@@ -15,6 +15,8 @@ public class Motor {
     private double previousPower;
     private double setPower;
 
+    private String name;
+
     public Motor(String name, boolean reverse, boolean brake, boolean voltage, HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, name);
 
@@ -25,6 +27,8 @@ public class Motor {
                 DcMotor.ZeroPowerBehavior.BRAKE:
                 DcMotor.ZeroPowerBehavior.FLOAT);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        this.name = name;
 
         this.voltage = voltage;
     }
@@ -40,11 +44,15 @@ public class Motor {
     }
 
     public int getPosition() {
-        return position;
+        return motor.getCurrentPosition();
     }
 
     public double getVelocity() {
         return motor.getVelocity();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void update() {

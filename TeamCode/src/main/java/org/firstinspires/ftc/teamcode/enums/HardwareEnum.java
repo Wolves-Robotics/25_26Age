@@ -9,7 +9,7 @@ public enum HardwareEnum {
     FLYWHEEL_MOTOR,
     FLYWHEEL_MOTOR2,
     INTAKE_MOTOR,
-    TURRET_ENCODER,
     HOOD_SERVO,
+    LATCH_SERVO,
     LIGHT
 }

@@ -54,6 +54,7 @@ public class Robot {
         matchSelection = MatchSelection.getInstance();
 
         robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
+        robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.16);
 
         auto = true;
     }
@@ -62,6 +63,7 @@ public class Robot {
         matchSelection = MatchSelection.getInstance();
 
         robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
+        robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.16);
 
         auto = false;
     }
@@ -139,6 +141,10 @@ public class Robot {
         // telemety
         if (initLoop) {
             matchSelection.updateTele(telemetry);
+
+            // temporary
+            shootingSubsystem.update();
+            shootingSubsystem.updatePanel(telemetry, manager);
         } else {
             if (!auto) {
                 driveSubsystem.update();
@@ -153,8 +159,13 @@ public class Robot {
         telemetry.addData("x", robotHardware.getFollower().getPose().getX());
         telemetry.addData("y", robotHardware.getFollower().getPose().getY());
         telemetry.addData("heading", robotHardware.getFollower().getHeading());
-        telemetry.addData("turret position", robotHardware.getMotorPosition(HardwareEnum.TURRET_MOTOR));
-        telemetry.addData("encoder", robotHardware.getTurretAngle());
+
+        telemetry.addData("position", robotHardware.getMotorPosition(HardwareEnum.TURRET_MOTOR));
+//        telemetry.addData("encoder", robotHardware.getTurretAngle());
+
+//        telemetry.addLine();
+//        telemetry.addData("Flywheel Ticks", robotHardware.getMotorPosition(HardwareEnum.BACK_LEFT));
+//        telemetry.addData("Flywheel Velocity", robotHardware.getMotorVelocity(HardwareEnum.BACK_LEFT));
 
         telemetry.update();
         manager.update();

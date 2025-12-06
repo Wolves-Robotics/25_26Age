@@ -24,8 +24,6 @@ public class Auto extends OpMode {
 
         robot.getRobotHardware().setPipeLine(2);
 
-        robot.shootingSubsystem().setPidOn(true);
-
         patternID = 21;
     }
 
@@ -48,9 +46,16 @@ public class Auto extends OpMode {
                         0 : 1
         );
 
+        robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getTeamColor());
+        robot.shootingSubsystem().setTargetPose(robot.getMatchSelection().getTeamColor());
+
         switch (robot.getMatchSelection().getAutos()) {
             case CLOSE_AUTO:
-                autoInterface = new CloseAuto(robot);
+                if (robot.getMatchSelection().getTeamColor() == Color.RED) {
+                    autoInterface = new CloseRedAuto(robot);
+                } else {
+                    autoInterface = new CloseBlueAuto(robot);
+                }
                 break;
             case FAR_AUTO:
                 autoInterface = new FarAuto();
@@ -68,5 +73,6 @@ public class Auto extends OpMode {
     @Override
     public final void stop() {
         robot.clearActions();
+        robot.getMatchSelection().setLastPose(robot.getRobotHardware().getCurrentPose());
     }
 }

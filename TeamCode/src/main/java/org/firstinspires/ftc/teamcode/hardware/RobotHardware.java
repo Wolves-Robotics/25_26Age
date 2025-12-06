@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.enums.Color;
 import org.firstinspires.ftc.teamcode.enums.HardwareEnum;
 import org.firstinspires.ftc.teamcode.hardware.singleSystems.Motor;
 import org.firstinspires.ftc.teamcode.hardware.singleSystems.Servo;
@@ -41,7 +42,7 @@ public class RobotHardware {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setPose(new Pose(120, 127.7, Math.toRadians(37)));
+        follower.setPose(new Pose(121.1, 129.2, Math.toRadians(36)));
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -68,7 +69,25 @@ public class RobotHardware {
 
         servoArrayList = new ArrayList<>();
         servoArrayList.add(new Servo("hoodServo", hardwareMap));
-        servoArrayList.add(new Servo("light", hardwareMap));
+        servoArrayList.add(new Servo("latch", hardwareMap));
+//        servoArrayList.add(new Servo("light", hardwareMap));
+    }
+
+    public void setFollowerPose(Color teamColor) {
+        if (teamColor == Color.RED) {
+            follower.setPose(new Pose(121.1, 129.2, Math.toRadians(36)));
+        } else {
+            follower.setPose(new Pose(22.9, 129.2, Math.toRadians(144)));
+        }
+    }
+
+
+    public void setFollowerPose(Pose pose) {
+        follower.setPose(pose);
+    }
+
+    public Pose getCurrentPose() {
+        return follower.getPose();
     }
 
     private Motor getMotor(HardwareEnum hardwareEnum) {
@@ -85,6 +104,10 @@ public class RobotHardware {
 
     public double getMotorVelocity(HardwareEnum hardwareEnum) {
         return getMotor(hardwareEnum).getVelocity();
+    }
+
+    public String getMotorName(HardwareEnum hardwareEnum) {
+        return getMotor(hardwareEnum).getName();
     }
 
     public void setMotorBrake(HardwareEnum hardwareEnum, boolean brake) {

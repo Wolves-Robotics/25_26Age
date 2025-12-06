@@ -11,15 +11,15 @@ public class Testing implements TeleInterface {
     public void setInitCommands(Robot robot, Gamepad gamepad1, Gamepad gamepad2) {
         robot.addAction(
                 () -> gamepad1.left_bumper,
-                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.HOOD_SERVO, 0));
+                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.LATCH_SERVO, 0));
 
         robot.addAction(
                 () -> gamepad1.right_bumper,
-                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.HOOD_SERVO, 1));
+                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.LATCH_SERVO, 1));
 
         robot.addAction(
                 () -> true,
-                () -> robot.getRobotHardware().setMotorPower(HardwareEnum.FLYWHEEL_MOTOR, gamepad1.left_trigger),
+                () -> robot.getRobotHardware().setMotorPower(HardwareEnum.INTAKE_MOTOR, gamepad1.left_trigger),
                 true);
 
         robot.addAction(
@@ -33,9 +33,9 @@ public class Testing implements TeleInterface {
         robot.setDrivingActions();
 
         robot.addAction(
-                () -> true,
-                () -> robot.shootingSubsystem().setIntaking(gamepad1.right_trigger),
-                true);
+                () -> gamepad1.right_trigger > 0.75,
+                () -> robot.shootingSubsystem().setIntaking(true),
+                () -> robot.shootingSubsystem().setIntaking(false));
 
         robot.addAction(
                 () -> gamepad1.x,
@@ -48,18 +48,17 @@ public class Testing implements TeleInterface {
                 () -> robot.driveSubsystem().setParking(false));
 
         robot.addAction(
-                () -> gamepad1.y,
-                ()-> robot.shootingSubsystem().toggleIntake());
-
+                () -> gamepad1.share,
+                () -> robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getTeamColor()));
 
         robot.addAction(
                 () -> gamepad1.left_bumper,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 0.8),
+                () -> robot.shootingSubsystem().setSpeedUp(true, 1660),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(
                 () -> gamepad1.left_trigger > 0.75,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 1),
+                () -> robot.shootingSubsystem().setSpeedUp(true, 2100),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(

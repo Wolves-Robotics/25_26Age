@@ -20,18 +20,17 @@ public class Tele extends OpMode {
         robot = new Robot(gamepad1, gamepad2, new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry()), telemetry), hardwareMap);
         robot.initTeleop();
 
+        robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getLastPose());
+        robot.shootingSubsystem().setTargetPose(robot.getMatchSelection().getTeamColor());
 
         robot.getRobotHardware().setPipeLine(
                 robot.getMatchSelection().getTeamColor() == Color.BLUE ?
                         0 : 1
         );
 
-        robot.shootingSubsystem().setPidOn(true);
-        robot.shootingSubsystem().setTarget(167);
-
         switch (robot.getMatchSelection().getTeleOps()) {
             case COMPETITION:
-                teleInterface = new EncoderTest();
+                teleInterface = new Competition();
                 break;
             case TESTING:
                 teleInterface = new Testing();
