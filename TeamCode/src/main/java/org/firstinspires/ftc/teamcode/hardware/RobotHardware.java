@@ -5,12 +5,8 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.enums.Color;
 import org.firstinspires.ftc.teamcode.enums.HardwareEnum;
 import org.firstinspires.ftc.teamcode.hardware.singleSystems.Motor;
@@ -25,15 +21,10 @@ public class RobotHardware {
 
     private final Follower follower;
 
-    private final IMU imu;
-
     private final Limelight3A limelight;
 
     private final ArrayList<Motor> motorArrayList;
     private final ArrayList<Servo> servoArrayList;
-
-    private AnalogInput turretEncoder;
-    private double encoderOffset, encoderPosition;
 
     public RobotHardware(HardwareMap hardwareMap) {
 
@@ -43,12 +34,6 @@ public class RobotHardware {
 
         follower = Constants.createFollower(hardwareMap);
         follower.setPose(new Pose(121.1, 129.2, Math.toRadians(36)));
-
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-        )));
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
@@ -64,16 +49,14 @@ public class RobotHardware {
         motorArrayList.add(new Motor("flywheelMotor2",true,  false, true,  hardwareMap));
         motorArrayList.add(new Motor("intakeMotor",   true,  true,  true,  hardwareMap));
 
-        turretEncoder = hardwareMap.get(AnalogInput.class, "encoder");
-
 
         servoArrayList = new ArrayList<>();
         servoArrayList.add(new Servo("hoodServo", hardwareMap));
         servoArrayList.add(new Servo("latch", hardwareMap));
-//        servoArrayList.add(new Servo("light", hardwareMap));
+        servoArrayList.add(new Servo("light", hardwareMap));
     }
 
-    public void setFollowerPose(Color teamColor) {
+    public void resetFollowerPose(Color teamColor) {
         if (teamColor == Color.RED) {
             follower.setPose(new Pose(121.1, 129.2, Math.toRadians(36)));
         } else {
@@ -82,7 +65,7 @@ public class RobotHardware {
     }
 
 
-    public void setFollowerPose(Pose pose) {
+    public void resetFollowerPose(Pose pose) {
         follower.setPose(pose);
     }
 
@@ -122,20 +105,8 @@ public class RobotHardware {
         getServo(hardwareEnum).setPosition(position);
     }
 
-    public double getTurretAngle() {
-        return AngleUnit.normalizeDegrees(encoderPosition);
-    }
-
-    public void resetOffset() {
-        encoderOffset = encoderPosition - encoderOffset;
-    }
-
-    public double getImuYaw() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-    }
-
-    public void resetYaw() {
-        imu.resetYaw();
+    public double getYaw() {
+        return follower.getHeading();
     }
 
     public Follower getFollower() {
@@ -155,8 +126,6 @@ public class RobotHardware {
             hub.clearBulkCache();
 
         follower.update();
-
-        encoderPosition = (turretEncoder.getVoltage()-0.043)/3.1*360 + encoderOffset;
 
         for (Motor m: motorArrayList)
             m.update();

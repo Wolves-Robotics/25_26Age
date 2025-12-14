@@ -20,8 +20,8 @@ public class Tele extends OpMode {
         robot = new Robot(gamepad1, gamepad2, new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry()), telemetry), hardwareMap);
         robot.initTeleop();
 
-        robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getLastPose());
-        robot.shootingSubsystem().setTargetPose(robot.getMatchSelection().getTeamColor());
+        robot.getRobotHardware().resetFollowerPose(robot.getMatchSelection().getLastPose());
+        robot.shootingSubsystem().setColorStuff(robot.getMatchSelection().getTeamColor());
 
         robot.getRobotHardware().setPipeLine(
                 robot.getMatchSelection().getTeamColor() == Color.BLUE ?
@@ -48,6 +48,8 @@ public class Tele extends OpMode {
     @Override
     public final void start() {
         robot.startMainLoop();
+        robot.shootingSubsystem().setTurretOffset(
+                robot.getMatchSelection().getTurretOffset());
 
         teleInterface.setMainCommands(robot, gamepad1, gamepad2);
     }

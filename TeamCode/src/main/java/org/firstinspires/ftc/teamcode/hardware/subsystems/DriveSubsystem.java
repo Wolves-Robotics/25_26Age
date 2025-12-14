@@ -68,7 +68,7 @@ public class DriveSubsystem {
         if (followingPath) {
 
         } else {
-            double botHeading = robotHardware.getImuYaw();
+            double botHeading = robotHardware.getYaw();
 
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);

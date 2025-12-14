@@ -15,7 +15,7 @@ public class Testing implements TeleInterface {
 
         robot.addAction(
                 () -> gamepad1.right_bumper,
-                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.LATCH_SERVO, 1));
+                () -> robot.getRobotHardware().setServoPosition(HardwareEnum.LIGHT, 0.5));
 
         robot.addAction(
                 () -> true,
@@ -49,16 +49,16 @@ public class Testing implements TeleInterface {
 
         robot.addAction(
                 () -> gamepad1.share,
-                () -> robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getTeamColor()));
+                () -> robot.getRobotHardware().resetFollowerPose(robot.getMatchSelection().getTeamColor()));
 
         robot.addAction(
                 () -> gamepad1.left_bumper,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 1660),
+                () -> robot.shootingSubsystem().setSpeedUp(true),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(
                 () -> gamepad1.left_trigger > 0.75,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 2100),
+                () -> robot.shootingSubsystem().setSpeedUp(true),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(

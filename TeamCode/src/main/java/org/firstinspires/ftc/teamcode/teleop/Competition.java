@@ -31,18 +31,18 @@ public class Competition implements TeleInterface{
 
         robot.addAction(
                 () -> gamepad1.share,
-                () -> robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getTeamColor()));
+                () -> robot.getRobotHardware().resetFollowerPose(robot.getMatchSelection().getTeamColor()));
 
 
 
         robot.addAction(
                 () -> gamepad2.left_bumper,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 1660),
+                () -> robot.shootingSubsystem().setSpeedUp(true),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(
                 () -> gamepad2.left_trigger > 0.75,
-                () -> robot.shootingSubsystem().setSpeedUp(true, 2100),
+                () -> robot.shootingSubsystem().setSpeedUp(true),
                 () -> robot.shootingSubsystem().setSpeedUp(false));
 
         robot.addAction(

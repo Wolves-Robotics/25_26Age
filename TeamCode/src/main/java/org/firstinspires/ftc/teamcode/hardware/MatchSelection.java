@@ -32,6 +32,8 @@ public class MatchSelection {
     private Color teamColor;
     private Pose lastPose;
 
+    private double turretOffset;
+
     // Default values should be defined here
     public MatchSelection() {
         matchEnum = MatchEnum.AUTO;
@@ -40,6 +42,8 @@ public class MatchSelection {
         teamColor = Color.RED;
 
         lastPose = new Pose();
+
+        turretOffset = 0;
     }
 
     public void setLastPose(Pose lastPose) {
@@ -48,6 +52,14 @@ public class MatchSelection {
 
     public Pose getLastPose() {
         return lastPose;
+    }
+
+    public void setTurretOffset(double ticks) {
+        turretOffset = ticks/147.05917;
+    }
+
+    public double getTurretOffset() {
+        return turretOffset;
     }
 
     // Increments what is selected

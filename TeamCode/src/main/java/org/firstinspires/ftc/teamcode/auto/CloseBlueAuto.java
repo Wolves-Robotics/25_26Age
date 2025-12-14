@@ -39,7 +39,7 @@ public class CloseBlueAuto implements AutoInterface {
                         new BezierCurve(
                                 new Pose(59.1, 98.500),
                                 new Pose(61, 91.000),
-                                new Pose(19, 83.600)
+                                new Pose(19.5, 83.00)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -109,13 +109,13 @@ public class CloseBlueAuto implements AutoInterface {
         shootingToGPP = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(59.1, 98.500), new Pose(51, 40.000))
+                        new BezierLine(new Pose(59.1, 98.500), new Pose(51, 42.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(225), Math.toRadians(180))
                 .setBrakingStart(1.7)
 
                 .addPath(
-                        new BezierLine(new Pose(51, 40.000), new Pose(9.5, 35.000))
+                        new BezierLine(new Pose(51, 42.000), new Pose(9.5, 39.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -151,7 +151,7 @@ public class CloseBlueAuto implements AutoInterface {
             case 0:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(startToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
 
                 }
@@ -225,7 +225,7 @@ public class CloseBlueAuto implements AutoInterface {
             case 4:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(leverToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
                 }
 
@@ -280,7 +280,7 @@ public class CloseBlueAuto implements AutoInterface {
             case 7:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(PGPToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
                 }
 
@@ -335,7 +335,7 @@ public class CloseBlueAuto implements AutoInterface {
             case 10:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(GPPToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
                 }
 

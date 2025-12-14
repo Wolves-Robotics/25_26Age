@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Servo {
     private com.qualcomm.robotcore.hardware.Servo servo;
 
-    private double previousPosition;
-    private double setPosition;
+    private double previousPosition = 0;
+    private double setPosition = 0;
 
     public Servo(String name, HardwareMap hardwareMap) {
         servo = hardwareMap.servo.get(name);

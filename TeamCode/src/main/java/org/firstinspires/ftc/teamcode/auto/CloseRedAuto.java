@@ -109,13 +109,13 @@ public class CloseRedAuto implements AutoInterface {
         shootingToGPP = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(84.900, 98.500), new Pose(93.000, 40.000))
+                        new BezierLine(new Pose(84.900, 98.500), new Pose(93.000, 42.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
                 .setBrakingStart(1.7)
 
                 .addPath(
-                        new BezierLine(new Pose(93.000, 40.000), new Pose(134.500, 35.000))
+                        new BezierLine(new Pose(93.000, 42.000), new Pose(134.500, 40))
                 )
                 .setConstantHeadingInterpolation(0)
 
@@ -151,7 +151,7 @@ public class CloseRedAuto implements AutoInterface {
             case 0:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(startToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
 
                 }
@@ -225,7 +225,7 @@ public class CloseRedAuto implements AutoInterface {
             case 4:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(leverToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
                 }
 
@@ -280,7 +280,7 @@ public class CloseRedAuto implements AutoInterface {
             case 7:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(PGPToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
                 }
 
@@ -335,7 +335,7 @@ public class CloseRedAuto implements AutoInterface {
             case 10:
                 if (!started) {
                     robot.getRobotHardware().getFollower().followPath(GPPToShooting);
-                    robot.shootingSubsystem().setSpeedUp(true, 1640);
+                    robot.shootingSubsystem().setSpeedUp(true);
                     started = true;
                 }
 

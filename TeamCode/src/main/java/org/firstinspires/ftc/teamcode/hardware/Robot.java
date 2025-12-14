@@ -8,6 +8,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.enums.Color;
 import org.firstinspires.ftc.teamcode.enums.HardwareEnum;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.ShootingSubsystem;
@@ -55,6 +56,7 @@ public class Robot {
 
         robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
         robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.16);
+        robotHardware.setServoPosition(HardwareEnum.LIGHT, 0.5);
 
         auto = true;
     }
@@ -64,6 +66,7 @@ public class Robot {
 
         robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
         robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.16);
+        robotHardware.setServoPosition(HardwareEnum.LIGHT, 0.5);
 
         auto = false;
     }
@@ -87,7 +90,6 @@ public class Robot {
                                             gamepad1.left_stick_y,
                                             gamepad1.right_stick_x),
                    true);
-        addAction(() -> gamepad1.options, () -> robotHardware.resetYaw());
     }
 
     public void addAction(BooleanSupplier booleanSupplier, Runnable pressRunnable) {
@@ -138,34 +140,25 @@ public class Robot {
             a.update();
         }
 
-        // telemety
-        if (initLoop) {
-            matchSelection.updateTele(telemetry);
-
-            // temporary
-            shootingSubsystem.update();
-            shootingSubsystem.updatePanel(telemetry, manager);
-        } else {
-            if (!auto) {
-                driveSubsystem.update();
-            }
-            shootingSubsystem.update();
-
-            shootingSubsystem.updatePanel(telemetry, manager);
-        }
-
         telemetry.addData("busy", robotHardware.getFollower().isBusy());
 
         telemetry.addData("x", robotHardware.getFollower().getPose().getX());
         telemetry.addData("y", robotHardware.getFollower().getPose().getY());
         telemetry.addData("heading", robotHardware.getFollower().getHeading());
 
-        telemetry.addData("position", robotHardware.getMotorPosition(HardwareEnum.TURRET_MOTOR));
-//        telemetry.addData("encoder", robotHardware.getTurretAngle());
+        // telemety
+        if (initLoop) {
+            matchSelection.updateTele(telemetry);
 
-//        telemetry.addLine();
-//        telemetry.addData("Flywheel Ticks", robotHardware.getMotorPosition(HardwareEnum.BACK_LEFT));
-//        telemetry.addData("Flywheel Velocity", robotHardware.getMotorVelocity(HardwareEnum.BACK_LEFT));
+            shootingSubsystem.update();
+            shootingSubsystem.updatePanel(telemetry, manager);
+        } else {
+
+            driveSubsystem.update();
+            shootingSubsystem.update();
+
+            shootingSubsystem.updatePanel(telemetry, manager);
+        }
 
         telemetry.update();
         manager.update();

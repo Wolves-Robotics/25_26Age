@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.enums.Color;
+import org.firstinspires.ftc.teamcode.enums.HardwareEnum;
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 
 @Autonomous(preselectTeleOp = "Tele")
@@ -24,12 +25,19 @@ public class Auto extends OpMode {
 
         robot.getRobotHardware().setPipeLine(2);
 
+        robot.addAction(
+                () -> gamepad1.a,
+                () -> robot.getMatchSelection().setTurretOffset(
+                        robot.getRobotHardware().getMotorPosition(
+                                HardwareEnum.TURRET_MOTOR)));
+
         patternID = 21;
     }
 
     @Override
     public final void init_loop() {
         robot.update();
+        robot.shootingSubsystem().setTurretOffset(robot.getMatchSelection().getTurretOffset());
 
         LLResult result = robot.getRobotHardware().getLLResult();
         if (result != null && result.isValid()) {
@@ -46,8 +54,8 @@ public class Auto extends OpMode {
                         0 : 1
         );
 
-        robot.getRobotHardware().setFollowerPose(robot.getMatchSelection().getTeamColor());
-        robot.shootingSubsystem().setTargetPose(robot.getMatchSelection().getTeamColor());
+        robot.getRobotHardware().resetFollowerPose(robot.getMatchSelection().getTeamColor());
+        robot.shootingSubsystem().setColorStuff(robot.getMatchSelection().getTeamColor());
 
         switch (robot.getMatchSelection().getAutos()) {
             case CLOSE_AUTO:
