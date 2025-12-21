@@ -59,10 +59,10 @@ public class CloseBlueAuto implements AutoInterface {
                         new BezierCurve(
                                 new Pose(19.5, 83.600),
                                 new Pose(34, 80.200),
-                                new Pose(17, 76.500)
+                                new Pose(22, 76.500)
                         )
                 )
-                .setLinearHeadingInterpolation(180, Math.toRadians(90))
+                .setLinearHeadingInterpolation(180, Math.toRadians(180))
                 .build();
 
         leverToShooting = follower
@@ -87,7 +87,7 @@ public class CloseBlueAuto implements AutoInterface {
                 .setBrakingStart(1.7)
 
                 .addPath(
-                        new BezierLine(new Pose(51, 65.000), new Pose(9.5, 59.000))
+                        new BezierLine(new Pose(51, 65.000), new Pose(10, 59.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .setBrakingStart(1.7)
@@ -97,7 +97,7 @@ public class CloseBlueAuto implements AutoInterface {
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(9.5, 59.000),
+                                new Pose(10, 59.000),
                                 new Pose(26, 59.700),
                                 new Pose(59.1, 98.500)
                         )
@@ -115,7 +115,7 @@ public class CloseBlueAuto implements AutoInterface {
                 .setBrakingStart(1.7)
 
                 .addPath(
-                        new BezierLine(new Pose(51, 42.000), new Pose(9.5, 39.000))
+                        new BezierLine(new Pose(51, 42.000), new Pose(10, 39.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -126,7 +126,7 @@ public class CloseBlueAuto implements AutoInterface {
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(9.5, 35.000),
+                                new Pose(10, 35.000),
                                 new Pose(29.8, 35.600),
                                 new Pose(50.1, 89.700),
                                 new Pose(59.1, 98.500)

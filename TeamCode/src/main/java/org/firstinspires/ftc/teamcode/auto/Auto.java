@@ -66,7 +66,11 @@ public class Auto extends OpMode {
                 }
                 break;
             case FAR_AUTO:
-                autoInterface = new FarAuto();
+                if (robot.getMatchSelection().getTeamColor() == Color.RED) {
+//                    autoInterface = new ;
+                } else {
+                    autoInterface = new OPENBlue(robot);
+                }
                 break;
         }
     }

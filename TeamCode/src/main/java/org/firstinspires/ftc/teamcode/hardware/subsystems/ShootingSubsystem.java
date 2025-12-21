@@ -79,7 +79,7 @@ public class ShootingSubsystem {
 //            };
             teamLight = 0.28;
         } else {
-            targetPose = new Pose(8, 138);
+            targetPose = new Pose(6, 138);
 
 //            lightPos = () -> {
 //                double fixedThing = 1 - Math.pow(1 - (velocity / targetVelo), 3);
@@ -158,9 +158,9 @@ public class ShootingSubsystem {
             flywheelPidOOn = true;
 
             firingTime.reset();
-            robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 1);
+            robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.9);
         } else if (!firing) {
-            robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.16);
+            robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.05);
             robotHardware.setMotorPower(HardwareEnum.INTAKE_MOTOR, 0);
         }
     }
@@ -180,7 +180,7 @@ public class ShootingSubsystem {
             shootingAngle = (-relativeAngle + turretOffset + 2 * Math.PI) % (2 * Math.PI);
 
             if (!manualTurretPid) {
-                target = Math.max(Math.min(Math.toIntExact(Math.round(147.05917 * shootingAngle)), 675), 15);
+                target = Math.max(Math.min(Math.toIntExact(Math.round(148.65072 * shootingAngle)), 675), 15);
             }
 
             pidController.setCoefficients(new PIDFCoefficients(p, i, d, 0));
@@ -233,7 +233,7 @@ public class ShootingSubsystem {
 
             if (targetVelo == 0) {
                 robotHardware.setServoPosition(HardwareEnum.LIGHT, teamLight);
-            } else if (targetVelo - velocity >= 80) {
+            } else if (targetVelo - velocity >= 60) {
                 robotHardware.setServoPosition(HardwareEnum.LIGHT, teamLight);
             } else {
                 robotHardware.setServoPosition(HardwareEnum.LIGHT, 0.5);
@@ -259,6 +259,8 @@ public class ShootingSubsystem {
     public void update() {
         double dt = deltaTime.seconds();
 
+        position = robotHardware.getMotorPosition(HardwareEnum.TURRET_MOTOR);
+
         if (intaking) {
             
         }
@@ -272,7 +274,7 @@ public class ShootingSubsystem {
         }
         
         if (firing) {
-            if (firingTime.milliseconds() > 250) {
+            if (firingTime.milliseconds() > 350) {
                 robotHardware.setMotorPower(HardwareEnum.INTAKE_MOTOR, 1);
             }
         }

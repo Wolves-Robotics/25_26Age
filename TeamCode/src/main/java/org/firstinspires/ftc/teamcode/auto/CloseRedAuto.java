@@ -59,10 +59,10 @@ public class CloseRedAuto implements AutoInterface {
                         new BezierCurve(
                                 new Pose(124.500, 83.600),
                                 new Pose(110.800, 80.200),
-                                new Pose(127.000, 76.500)
+                                new Pose(122.000, 76.500)
                         )
                 )
-                .setLinearHeadingInterpolation(0, Math.toRadians(90))
+                .setLinearHeadingInterpolation(0, Math.toRadians(0))
                 .build();
 
         leverToShooting = follower

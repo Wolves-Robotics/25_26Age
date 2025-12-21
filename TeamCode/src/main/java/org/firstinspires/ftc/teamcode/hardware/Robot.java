@@ -55,7 +55,7 @@ public class Robot {
         matchSelection = MatchSelection.getInstance();
 
         robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
-        robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.16);
+        robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.05);
         robotHardware.setServoPosition(HardwareEnum.LIGHT, 0.5);
 
         auto = true;
@@ -65,7 +65,7 @@ public class Robot {
         matchSelection = MatchSelection.getInstance();
 
         robotHardware.setServoPosition(HardwareEnum.HOOD_SERVO, 0);
-        robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.16);
+        robotHardware.setServoPosition(HardwareEnum.LATCH_SERVO, 0.05);
         robotHardware.setServoPosition(HardwareEnum.LIGHT, 0.5);
 
         auto = false;
@@ -90,6 +90,10 @@ public class Robot {
                                             gamepad1.left_stick_y,
                                             gamepad1.right_stick_x),
                    true);
+        addAction(
+                () -> gamepad1.options,
+                () -> robotHardware.resetYaw()
+        );
     }
 
     public void addAction(BooleanSupplier booleanSupplier, Runnable pressRunnable) {

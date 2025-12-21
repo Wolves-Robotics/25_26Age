@@ -55,7 +55,7 @@ public class MatchSelection {
     }
 
     public void setTurretOffset(double ticks) {
-        turretOffset = ticks/147.05917;
+        turretOffset = ticks/148.65072;
     }
 
     public double getTurretOffset() {

@@ -5,8 +5,11 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.enums.Color;
 import org.firstinspires.ftc.teamcode.enums.HardwareEnum;
 import org.firstinspires.ftc.teamcode.hardware.singleSystems.Motor;
@@ -26,6 +29,8 @@ public class RobotHardware {
     private final ArrayList<Motor> motorArrayList;
     private final ArrayList<Servo> servoArrayList;
 
+    private final IMU imu;
+
     public RobotHardware(HardwareMap hardwareMap) {
 
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -33,11 +38,18 @@ public class RobotHardware {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setPose(new Pose(121.1, 129.2, Math.toRadians(36)));
+        follower.setPose(new Pose(121.1 - 1.51690686445, 129.2 - 1.10209734805, Math.toRadians(36)));
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
         limelight.start();
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(
+                new IMU.Parameters(
+                        new RevHubOrientationOnRobot(
+                                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
 
         motorArrayList = new ArrayList<>();
         motorArrayList.add(new Motor("frontLeft",     true,  false, false, hardwareMap));
@@ -58,9 +70,9 @@ public class RobotHardware {
 
     public void resetFollowerPose(Color teamColor) {
         if (teamColor == Color.RED) {
-            follower.setPose(new Pose(121.1, 129.2, Math.toRadians(36)));
+            follower.setPose(new Pose(121.1 - 1.51690686445, 129.2 - 1.10209734805, Math.toRadians(36)));
         } else {
-            follower.setPose(new Pose(22.9, 129.2, Math.toRadians(144)));
+            follower.setPose(new Pose(22.9 + 1.51690686445, 129.2 - 1.10209734805, Math.toRadians(144)));
         }
     }
 
@@ -106,7 +118,11 @@ public class RobotHardware {
     }
 
     public double getYaw() {
-        return follower.getHeading();
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+
+    public void resetYaw() {
+        imu.resetYaw();
     }
 
     public Follower getFollower() {
