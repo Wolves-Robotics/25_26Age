@@ -18,6 +18,11 @@ apply from: '../build.dependencies.gradle'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
+    compileSdk 35
+    defaultConfig {
+        minSdk 24
+    }
+
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
@@ -25,4 +30,7 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+
+    implementation "org.ejml:ejml-simple:0.44.0"
+    implementation "org.joml:joml:1.10.8"
 }
