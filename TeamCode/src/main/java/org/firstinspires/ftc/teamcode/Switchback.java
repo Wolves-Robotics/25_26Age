@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.bylazar.telemetry.JoinedTelemetry;
-import com.bylazar.telemetry.PanelsTelemetry;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.utils.Drawing;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.utils.MovingAverageFilter;
-import org.firstinspires.ftc.teamcode.utils.WolvesLogger;
+import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 
 import java.util.List;
 
@@ -28,21 +28,22 @@ public class Switchback {
     }
 
     private HardwareMap hardware;
-    private Telemetry telemetry;
-    private Drawing drawing;
     private MovingAverageFilter averageVoltage, averageHz;
-    private ElapsedTime loopTimes;
+    private ElapsedTime loopTimer;
 
     private List<LynxModule> lynxModules;
 
+    private Follower follower;
+
+    private DriveSubsystem driveSubsystem;
+
 
     public void init(OpMode opMode) {
-        WolvesLogger.LOGGER.info("Initialized");
+        ExternalTools.initialize(opMode.telemetry);
+        ExternalTools.LOGGER.info("Initialized");
 
         hardware = opMode.hardwareMap;
-        telemetry = new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), opMode.telemetry);
 
-        drawing = new Drawing();
         lynxModules = opMode.hardwareMap.getAll(LynxModule.class);
         for (LynxModule module : lynxModules)
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -50,32 +51,56 @@ public class Switchback {
         averageVoltage = new MovingAverageFilter(200);
         averageHz      = new MovingAverageFilter(200);
 
-        loopTimes = new ElapsedTime();
+        loopTimer = new ElapsedTime();
 
-        DcMotorEx intake = initMotor("intakeMotor", DcMotorSimple.Direction.REVERSE);
+        follower = Constants.createFollower(hardware);
+        follower.setPose(new Pose(72, 72, 0));
+
+        DcMotorEx fL = initMotor("frontLeft", DcMotorSimple.Direction.REVERSE);
+        DcMotorEx fR = initMotor("frontRight", DcMotorSimple.Direction.FORWARD);
+        DcMotorEx bL = initMotor("backLeft", DcMotorSimple.Direction.REVERSE);
+        DcMotorEx bR = initMotor("backRight", DcMotorSimple.Direction.FORWARD);
+
+
+        driveSubsystem = new DriveSubsystem(
+                new DriveSubsystem.DriveStuff(
+                    fL,
+                    fR,
+                    bL,
+                    bR,
+                    follower
+                )
+        );
 
     }
 
     public void read() {
-        loopTimes.reset();
+        loopTimer.reset();
 
         for (LynxModule module : lynxModules)
             module.clearBulkCache();
 
-        drawing.reset();
+        ExternalTools.fieldReset();
         averageVoltage.update(hardware.voltageSensor.iterator().next().getVoltage());
 
+        driveSubsystem.read();
     }
 
     public void update() {
+        follower.updatePose();
+        driveSubsystem.update();
 
-        drawing.update();
     }
 
     public void write() {
+        driveSubsystem.write();
 
-        telemetry.addData("Average Loop Hz", averageHz.update(1000/ loopTimes.milliseconds()));
-        telemetry.update();
+        ExternalTools.TELEMETRY.addData("Average Loop Hz", averageHz.update(1000/ loopTimer.milliseconds()));
+        ExternalTools.write();
+    }
+
+    public DriveSubsystem getDriveSub() {
+        return driveSubsystem;
     }
 
     private DcMotorEx initMotor(String name, DcMotorSimple.Direction dir) {
