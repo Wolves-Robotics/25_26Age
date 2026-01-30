@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExternalTools {
-    public static final Logger LOGGER = LoggerFactory.getLogger("Wolves Robotics");
-    public static final FieldManager FIELD = PanelsField.INSTANCE.getField();
-    public static final MultipleTelemetry TELEMETRY = new MultipleTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry());
+    public static Logger LOGGER = LoggerFactory.getLogger("Wolves Robotics");
+    public static FieldManager FIELD = PanelsField.INSTANCE.getField();
+    public static MultipleTelemetry TELEMETRY = new MultipleTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry());
 
     public static void initialize(Telemetry telemetry) {
         FIELD.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());

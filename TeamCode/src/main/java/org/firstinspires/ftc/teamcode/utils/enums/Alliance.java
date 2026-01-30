@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.utils.enums;
 
 public enum Alliance {
     RED(24),
@@ -7,4 +7,8 @@ public enum Alliance {
     private int id;
 
     Alliance(int id) {this.id = id;}
+
+    public int getId() {
+        return id;
+    }
 }

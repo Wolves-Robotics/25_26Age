@@ -2,18 +2,27 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.PedroConstants;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.utils.MovingAverageFilter;
+import org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.GeneralSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
+import org.firstinspires.ftc.teamcode.utils.config.Constants;
+import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
+import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
+import org.firstinspires.ftc.teamcode.utils.control.MovingAverageFilter;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
+import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
 import java.util.List;
 
@@ -36,6 +45,9 @@ public class Switchback {
     private Follower follower;
 
     private DriveSubsystem driveSubsystem;
+    private TurretSubsystem turretSubsystem;
+    private FlywheelSubsystem flywheelSubsystem;
+    private GeneralSubsystem generalSubsystem;
 
 
     public void init(OpMode opMode) {
@@ -44,23 +56,49 @@ public class Switchback {
 
         hardware = opMode.hardwareMap;
 
-        lynxModules = opMode.hardwareMap.getAll(LynxModule.class);
+        lynxModules = hardware.getAll(LynxModule.class);
         for (LynxModule module : lynxModules)
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
-        averageVoltage = new MovingAverageFilter(200);
-        averageHz      = new MovingAverageFilter(200);
+        averageVoltage = new MovingAverageFilter(200, 12.5);
+        averageHz      = new MovingAverageFilter(200, 100);
 
         loopTimer = new ElapsedTime();
 
-        follower = Constants.createFollower(hardware);
-        follower.setPose(new Pose(72, 72, 0));
+        follower = PedroConstants.createFollower(hardware);
+
+        Limelight3A limelight = hardware.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(100);
+        limelight.start();
+
+        if (MatchDetails.ALLIANCECOLOR == Alliance.RED) {
+            MatchDetails.target = Constants.RED_TARGET_POS;
+            MatchDetails.aprilTag = Constants.RED_APRILTAG;
+            limelight.pipelineSwitch(1);
+        } else {
+            MatchDetails.target = Constants.BLUE_TARGET_POS;
+            MatchDetails.aprilTag = Constants.BLUE_APRILTAG;
+            limelight.pipelineSwitch(0);
+        }
 
         DcMotorEx fL = initMotor("frontLeft", DcMotorSimple.Direction.REVERSE);
         DcMotorEx fR = initMotor("frontRight", DcMotorSimple.Direction.FORWARD);
         DcMotorEx bL = initMotor("backLeft", DcMotorSimple.Direction.REVERSE);
         DcMotorEx bR = initMotor("backRight", DcMotorSimple.Direction.FORWARD);
 
+        DcMotorEx turretMotor = initMotor("turretMotor", DcMotorSimple.Direction.REVERSE);
+
+        DcMotorEx flywheelMotor1 = initMotor("flywheelMotor",  DcMotorSimple.Direction.REVERSE);
+        DcMotorEx flywheelMotor2 = initMotor("flywheelMotor2", DcMotorSimple.Direction.FORWARD);
+
+        Servo hood = hardware.get(Servo.class, "hoodServo");
+        hood.setDirection(Servo.Direction.REVERSE);
+        hood.setPosition(0);
+
+        DcMotorEx intake = initMotor("intakeMotor", DcMotorSimple.Direction.REVERSE);
+
+        Servo latch = hardware.get(Servo.class, "latch");
+        latch.setPosition(0);
 
         driveSubsystem = new DriveSubsystem(
                 new DriveSubsystem.DriveStuff(
@@ -69,9 +107,63 @@ public class Switchback {
                     bL,
                     bR,
                     follower
-                )
-        );
+                ));
 
+        generalSubsystem = new GeneralSubsystem();
+        turretSubsystem = new TurretSubsystem();
+        flywheelSubsystem = new FlywheelSubsystem();
+
+        generalSubsystem.init(
+                new GeneralSubsystem.GeneralStuff(
+                        intake,
+                        latch,
+                        () -> false,
+                        () -> 0.,
+                        () -> 0.,
+                        flywheelSubsystem::getError,
+                        flywheelSubsystem::getD
+                ));
+
+        turretSubsystem.init(
+                new TurretSubsystem.TurretStuff(
+                        turretMotor,
+                        turretMotor::getCurrentPosition,
+                        follower,
+                        limelight,
+                        generalSubsystem::getRobotState
+                ));
+
+        flywheelSubsystem.init(
+                new FlywheelSubsystem.FlywheelStuff(
+                        flywheelMotor1,
+                        flywheelMotor2,
+                        bL::getVelocity, //encoder on bL port idk man
+                        hood,
+                        follower,
+                        opMode.gamepad1, generalSubsystem::getRobotState
+                ));
+
+    }
+
+    public void setPose(Pose pose) {
+        follower.setPose(pose);
+        follower.updatePose();
+    }
+
+    public void resetPose() {
+        if (MatchDetails.ALLIANCECOLOR == Alliance.RED) {
+            follower.setPose(Constants.RED_RESET_POS);
+        } else {
+            follower.setPose(Constants.BLUE_RESET_POS);
+        }
+    }
+
+    public void setFinalPose() {
+        MatchDetails.PoseAtStop = follower.getPose();
+    }
+
+    public Follower getFollower() {
+        return follower;
     }
 
     public void read() {
@@ -83,24 +175,57 @@ public class Switchback {
         ExternalTools.fieldReset();
         averageVoltage.update(hardware.voltageSensor.iterator().next().getVoltage());
 
+        follower.updatePose();
+
         driveSubsystem.read();
+        turretSubsystem.read();
+        flywheelSubsystem.read();
+        generalSubsystem.read();
     }
 
     public void update() {
-        follower.updatePose();
         driveSubsystem.update();
-
+        turretSubsystem.update();
+        flywheelSubsystem.update();
+        generalSubsystem.update();
     }
 
     public void write() {
         driveSubsystem.write();
+        turretSubsystem.write();
+        flywheelSubsystem.write();
+        generalSubsystem.write();
 
-        ExternalTools.TELEMETRY.addData("Average Loop Hz", averageHz.update(1000/ loopTimer.milliseconds()));
+        ExternalTools.TELEMETRY.addData("Average Loop Hz", averageHz.update(1000/loopTimer.milliseconds()));
         ExternalTools.write();
+    }
+
+    public void changeState(RobotState robotState) {
+        generalSubsystem.changeState(robotState);
+    }
+
+    public void switchSpeedUp() {
+        if (generalSubsystem.getRobotState() == RobotState.SPEED_UP) {
+            generalSubsystem.changeState(RobotState.IDLE);
+        } else {
+            generalSubsystem.changeState(RobotState.SPEED_UP);
+        }
     }
 
     public DriveSubsystem getDriveSub() {
         return driveSubsystem;
+    }
+
+    public TurretSubsystem getTurretSub() {
+        return turretSubsystem;
+    }
+
+    public FlywheelSubsystem getFlywheelSub() {
+        return flywheelSubsystem;
+    }
+
+    public GeneralSubsystem getGeneralSubsystem() {
+        return generalSubsystem;
     }
 
     private DcMotorEx initMotor(String name, DcMotorSimple.Direction dir) {
