@@ -12,18 +12,18 @@ public class MatchDetails {
     public static Pattern PATTERN;
 
     // Robot Variables
-    public static Pose PoseAtStop;
+    public static Pose poseAtStop;
     public static Vector2d target;
     public static Vector2d aprilTag;
-    public static double ZeroToForwardAngle;
+    public static double zeroToForwardAngle;
 
     public static void ResetDetails() {
         ALLIANCECOLOR = null;
         PATTERN = null;
 
-        PoseAtStop = null;
+        poseAtStop = null;
         target = null;
         aprilTag = null;
-        ZeroToForwardAngle = 0;
+        zeroToForwardAngle = 0;
     }
 }

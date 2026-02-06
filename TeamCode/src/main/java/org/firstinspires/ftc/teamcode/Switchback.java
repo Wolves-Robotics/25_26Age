@@ -159,7 +159,7 @@ public class Switchback {
     }
 
     public void setFinalPose() {
-        MatchDetails.PoseAtStop = follower.getPose();
+        MatchDetails.poseAtStop = follower.getPose();
     }
 
     public Follower getFollower() {

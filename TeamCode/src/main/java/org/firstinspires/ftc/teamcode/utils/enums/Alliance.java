@@ -6,7 +6,9 @@ public enum Alliance {
 
     private int id;
 
-    Alliance(int id) {this.id = id;}
+    Alliance(int id) {
+        this.id = id;
+    }
 
     public int getId() {
         return id;

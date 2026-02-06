@@ -27,7 +27,7 @@ public class TestTele extends OpMode {
         switchback = Switchback.getInstance();
         switchback.init(this);
 
-        switchback.setPose(MatchDetails.PoseAtStop);
+        switchback.setPose(MatchDetails.poseAtStop);
 
         switchback.getDriveSub().stopFollowing();
 
@@ -50,7 +50,7 @@ public class TestTele extends OpMode {
             switchback.getTurretSub().setZeroToForwardAngle();
         }
 
-        ExternalTools.TELEMETRY.addData("Angle", MatchDetails.ZeroToForwardAngle);
+        ExternalTools.TELEMETRY.addData("Angle", MatchDetails.zeroToForwardAngle);
 
         switchback.write();
     }
@@ -126,13 +126,13 @@ public class TestTele extends OpMode {
 //        }
 
 
-//        if (gamepad1.dpadRightWasPressed()) {
-//            switchback.getFlywheelSub().setTargetVel(switchback.getFlywheelSub().getTargetVel() + 20);
-//        }
-//
-//        if (gamepad1.dpadLeftWasPressed()) {
-//            switchback.getFlywheelSub().setTargetVel(switchback.getFlywheelSub().getTargetVel() - 20);
-//        }
+        if (gamepad1.dpadRightWasPressed()) {
+            switchback.getFlywheelSub().setTargetVel(switchback.getFlywheelSub().getTargetVel() + 20);
+        }
+
+        if (gamepad1.dpadLeftWasPressed()) {
+            switchback.getFlywheelSub().setTargetVel(switchback.getFlywheelSub().getTargetVel() - 20);
+        }
 
         switchback.update();
 

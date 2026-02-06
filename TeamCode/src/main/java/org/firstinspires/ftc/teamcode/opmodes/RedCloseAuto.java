@@ -1,61 +1,41 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.config.Constants;
+import org.firstinspires.ftc.teamcode.utils.control.actions.ChangeStateAction;
+import org.firstinspires.ftc.teamcode.utils.control.actions.FollowAction;
+import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
-import org.firstinspires.ftc.teamcode.utils.ExternalTools;
-import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
-@Autonomous
-public class RedCloseAuto extends OpMode {
-    private Switchback switchback;
-
-    private PathChain startToShooting, shootingToPPG,
-            PPGToLever, leverToShooting,
-            shootingToPGP, PGPToShooting,
-            shootingToGPP, GPPToShooting;
-
-    private boolean started = false, finished = false;
-    private int index = 0;
-    private ElapsedTime elapsedTime;
+@Autonomous(preselectTeleOp = "TestTele")
+public class RedCloseAuto extends Auto {
+    @Override
+    protected Alliance setColor() {
+        return Alliance.RED;
+    }
 
     @Override
-    public void init() {
-        MatchDetails.ResetDetails();
+    protected Pose setPose() {
+        return Constants.RED_CLOSE_INIT;
+    }
 
-        MatchDetails.ALLIANCECOLOR = Alliance.RED;
+    @Override
+    protected void setActionList() {
+        PathChain startToShooting = follower
+            .pathBuilder()
+            .addPath(
+                    new BezierLine(new Pose(120, 127.700), new Pose(84.900, 98.500))
+            )
+            .setLinearHeadingInterpolation(Math.toRadians(37), Math.toRadians(45))
+            .build();
 
-        switchback = Switchback.getInstance();
-        switchback.init(this);
-
-        switchback.setPose(Constants.RED_CLOSE_INIT);
-
-        switchback.getDriveSub().startFollowing();
-
-
-        elapsedTime = new ElapsedTime();
-
-        Follower follower = switchback.getFollower();
-
-        startToShooting = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(120, 127.700), new Pose(84.900, 98.500))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(37), Math.toRadians(45))
-                .build();
-
-        shootingToPPG = follower
+        PathChain shootingToPPG = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -67,7 +47,7 @@ public class RedCloseAuto extends OpMode {
                 .setTangentHeadingInterpolation()
                 .build();
 
-        PPGToLever = follower
+        PathChain PPGToLever = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -79,7 +59,7 @@ public class RedCloseAuto extends OpMode {
                 .setLinearHeadingInterpolation(0, Math.toRadians(0))
                 .build();
 
-        leverToShooting = follower
+        PathChain leverToShooting = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -92,7 +72,7 @@ public class RedCloseAuto extends OpMode {
                 .setReversed()
                 .build();
 
-        shootingToPGP = follower
+        PathChain shootingToPGP = follower
                 .pathBuilder()
                 .addPath(
                         new BezierLine(new Pose(84.900, 98.500), new Pose(93.000, 65.000))
@@ -107,7 +87,7 @@ public class RedCloseAuto extends OpMode {
                 .setBrakingStart(1.8)
                 .build();
 
-        PGPToShooting = follower
+        PathChain PGPToShooting = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -120,7 +100,7 @@ public class RedCloseAuto extends OpMode {
                 .setReversed()
                 .build();
 
-        shootingToGPP = follower
+        PathChain shootingToGPP = follower
                 .pathBuilder()
                 .addPath(
                         new BezierLine(new Pose(84.900, 98.500), new Pose(93.000, 42.000))
@@ -132,11 +112,10 @@ public class RedCloseAuto extends OpMode {
                         new BezierLine(new Pose(93.000, 42.000), new Pose(132.40, 38))
                 )
                 .setConstantHeadingInterpolation(0)
-
                 .setBrakingStart(1.8)
                 .build();
 
-        GPPToShooting = follower
+        PathChain GPPToShooting = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -149,259 +128,51 @@ public class RedCloseAuto extends OpMode {
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
-    }
 
-    @Override
-    public void init_loop() {
-        switchback.read();
+        addAction(
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(startToShooting),
+                new SleepAction(700),
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(1800),
 
-        if (gamepad1.aWasPressed()) {
-            switchback.getTurretSub().resetEncoder();
-        }
+                new ChangeStateAction(RobotState.INTAKE),
+                new FollowAction(shootingToPPG),
+                new SleepAction(100),
+                new ChangeStateAction(RobotState.IDLE),
 
-        if (gamepad1.bWasPressed()) {
-            switchback.getTurretSub().setZeroToForwardAngle();
-        }
+                new FollowAction(PPGToLever),
+                new SleepAction(100),
 
-        ExternalTools.TELEMETRY.addData("Angle", MatchDetails.ZeroToForwardAngle);
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(leverToShooting),
+                new SleepAction(700),
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(1800),
 
-        switchback.write();
-    }
+                new ChangeStateAction(RobotState.INTAKE),
+                new FollowAction(shootingToPGP),
+                new SleepAction(100),
+                new ChangeStateAction(RobotState.IDLE),
 
-    @Override
-    public void loop() {
-        switchback.read();
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(PGPToShooting),
+                new SleepAction(700),
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(1800),
 
-        switch (index) {
-            case 0:
-                if (!started) {
-                    switchback.getFollower().followPath(startToShooting);
-                    switchback.changeState(RobotState.SPEED_UP);
-                    started = true;
+                new ChangeStateAction(RobotState.INTAKE),
+                new FollowAction(shootingToGPP),
+                new SleepAction(100),
+                new ChangeStateAction(RobotState.IDLE),
 
-                }
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(GPPToShooting),
+                new SleepAction(700),
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(1800),
 
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 700) {
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 1:
-                if (!started) {
-                    switchback.changeState(RobotState.FIRE);
-                    started = true;
-
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 1800) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 2:
-                if (!started) {
-                    switchback.getFollower().followPath(shootingToPPG);
-                    switchback.changeState(RobotState.INTAKE);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 100) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 3:
-                if (!started) {
-                    switchback.getFollower().followPath(PPGToLever);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 100) {
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 4:
-                if (!started) {
-                    switchback.getFollower().followPath(leverToShooting);
-                    switchback.changeState(RobotState.SPEED_UP);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 500) {
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 5:
-                if (!started) {
-                    switchback.changeState(RobotState.FIRE);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 1500) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 6:
-                if (!started) {
-                    switchback.getFollower().followPath(shootingToPGP);
-                    switchback.changeState(RobotState.INTAKE);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 100) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 7:
-                if (!started) {
-                    switchback.getFollower().followPath(PGPToShooting);
-                    switchback.changeState(RobotState.SPEED_UP);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 500) {
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 8:
-                if (!started) {
-                    switchback.changeState(RobotState.FIRE);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 1500) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 9:
-                if (!started) {
-                    switchback.getFollower().followPath(shootingToGPP);
-                    switchback.changeState(RobotState.INTAKE);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 100) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 10:
-                if (!started) {
-                    switchback.getFollower().followPath(GPPToShooting);
-                    switchback.changeState(RobotState.SPEED_UP);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 500) {
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 11:
-                if (!started) {
-                    switchback.changeState(RobotState.FIRE);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 1800) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-        }
-
-        switchback.update();
-
-        switchback.write();
-    }
-
-    @Override
-    public void stop() {
-        switchback.setFinalPose();
+                new ChangeStateAction(RobotState.IDLE)
+        );
     }
 }

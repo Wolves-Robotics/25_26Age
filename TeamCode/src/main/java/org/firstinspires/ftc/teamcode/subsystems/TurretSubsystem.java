@@ -8,11 +8,9 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
-import org.firstinspires.ftc.teamcode.utils.control.MovingAverageFilter;
 import org.firstinspires.ftc.teamcode.utils.control.TurretPID;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import org.joml.Vector2d;
@@ -30,7 +28,7 @@ public class TurretSubsystem {
     //                                           millimeters / millimeter per inch
     private final double LIMELIGHTFROMTURRETCENTER = 144.514 / 25.4;
 
-    private boolean tracking = false, prevValid = false;
+    public static boolean tracking = false, prevValid = false;
     private double targetTicks, power, targetDeg;
 
     private PIDFController tickPID, degreePID;
@@ -38,7 +36,7 @@ public class TurretSubsystem {
 
     public static PIDFCoefficients
             tickCoeffs   = new PIDFCoefficients(0.015, 0, 0, 0),
-            degreeCoeffs = new PIDFCoefficients(0.015, 0, 0, 0);
+            degreeCoeffs = new PIDFCoefficients(0.020, 0, 0.0000002, 0);
 
     public void init(TurretStuff hardware) {
         this.hardware = hardware;
@@ -74,7 +72,7 @@ public class TurretSubsystem {
                 double theta2 = Math.atan2(target.y - turret.y, target.x - turret.x);
                 double theta3 = h - theta2;
 
-                targetTicks = (MatchDetails.ZeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0)) * TICKSPERRAD;
+                targetTicks = (MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0)) * TICKSPERRAD;
 
                 targetTicks = Math.max(Math.min(targetTicks, 490), 10);
 
@@ -129,10 +127,11 @@ public class TurretSubsystem {
         ExternalTools.TELEMETRY.addData("Target", targetTicks);
         ExternalTools.TELEMETRY.addData("Degrees", targetDeg);
         ExternalTools.TELEMETRY.addData("Power", power);
+        ExternalTools.TELEMETRY.addData("Limelight", prevValid);
     }
 
     public void setZeroToForwardAngle() {
-        MatchDetails.ZeroToForwardAngle = hardware.turretPos.getAsInt() / TICKSPERRAD;
+        MatchDetails.zeroToForwardAngle = hardware.turretPos.getAsInt() / TICKSPERRAD;
     }
 
     public void resetEncoder() {

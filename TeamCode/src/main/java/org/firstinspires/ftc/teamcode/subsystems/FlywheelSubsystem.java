@@ -23,7 +23,7 @@ public class FlywheelSubsystem {
 
     private FlywheelStuff hardware;
 
-    private boolean isRunning;
+    public static boolean isRunning;
     private double targetVel, angle, vel, d, p0, p1;
 
     private PIDFController flywheelPIDF;
@@ -64,8 +64,8 @@ public class FlywheelSubsystem {
                 angle = 69;
                 hardware.hood.setPosition(0);
             } else if (d < 115) {
-                angle = 61;
-                hardware.hood.setPosition(0.5);
+                angle = 64;
+                hardware.hood.setPosition(0.25);
             } else {
                 angle = 53;
                 hardware.hood.setPosition(1);
@@ -80,11 +80,17 @@ public class FlywheelSubsystem {
                 vel = 0;
 
             if (!tuning)
-                targetVel = velToMotor(vel);
+                if (d < 70) {
+                    targetVel = 101.14945*vel - 1740.74313;
+                } else if (d < 115) {
+                    targetVel = 109.02171*vel-2040.46856;
+                } else {
+                    targetVel = 93.47266*vel-1620.42071;
+                }
 
             flywheelPIDF.setCoefficients(flywheelCoefs);
             flywheelPIDF.updateError(targetVel - hardware.speed.getAsDouble());
-            if (Math.abs(flywheelPIDF.getError()) < 100) {
+            if (Math.abs(flywheelPIDF.getError()) < 40) {
                 hardware.controller.rumble(200);
             }
             double power = flywheelPIDF.run() + velToPower(targetVel);

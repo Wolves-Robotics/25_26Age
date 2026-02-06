@@ -23,15 +23,7 @@ public class GeneralSubsystem {
 
     public void update() {
         if (robotState == RobotState.FIRE) {
-            if (hardware.distance.getAsDouble() > 115) {
-                if (Math.abs(hardware.velocityError.getAsDouble()) < 150) {
-                    hardware.intake.setPower(1);
-                } else {
-                    hardware.intake.setPower(0);
-                }
-            } else {
-                 hardware.intake.setPower(1);
-            }
+             hardware.intake.setPower(1);
         }
     }
 

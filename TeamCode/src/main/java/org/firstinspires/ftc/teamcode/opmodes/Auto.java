@@ -51,7 +51,7 @@ public abstract class Auto extends OpMode {
             switchback.getTurretSub().setZeroToForwardAngle();
         }
 
-        ExternalTools.TELEMETRY.addData("Angle", MatchDetails.ZeroToForwardAngle);
+        ExternalTools.TELEMETRY.addData("Angle", MatchDetails.zeroToForwardAngle);
 
         switchback.write();
     }

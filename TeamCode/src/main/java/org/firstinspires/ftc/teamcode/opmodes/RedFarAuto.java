@@ -1,124 +1,81 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.config.Constants;
+import org.firstinspires.ftc.teamcode.utils.control.actions.ChangeStateAction;
+import org.firstinspires.ftc.teamcode.utils.control.actions.FollowAction;
+import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
-import org.firstinspires.ftc.teamcode.utils.ExternalTools;
-import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
-@Autonomous
-public class RedFarAuto extends OpMode {
-    private Switchback switchback;
-
-    private PathChain bhhh;
-
-    private boolean started = false, finished = false;
-    private int index = 0;
-    private ElapsedTime elapsedTime;
+@Autonomous(preselectTeleOp = "TestTele")
+public class RedFarAuto extends Auto {
+    @Override
+    protected Alliance setColor() {
+        return Alliance.RED;
+    }
 
     @Override
-    public void init() {
-        MatchDetails.ResetDetails();
+    protected Pose setPose() {
+        return Constants.RED_FAR_INIT;
+    }
 
-        MatchDetails.ALLIANCECOLOR = Alliance.RED;
+    @Override
+    protected void setActionList() {
 
-        switchback = Switchback.getInstance();
-        switchback.init(this);
-
-        switchback.setPose(Constants.RED_FAR_INIT);
-
-        switchback.getDriveSub().startFollowing();
-
-
-        elapsedTime = new ElapsedTime();
-
-        Follower follower = switchback.getFollower();
-
-
-        bhhh = follower
+        PathChain intakeStart1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(96, 7.08661), new Pose(111, 8))
+                        new BezierLine(new Pose(93.400, 9.200), new Pose(133.700, 22.500))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-60))
                 .build();
-    }
 
-    @Override
-    public void init_loop() {
-        switchback.read();
+        PathChain intakeFollowThrough = follower.
+                pathBuilder().
+                addPath(
+                        new BezierLine(new Pose(133.700, 22.500), new Pose(136.700, 8.300))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-60), Math.toRadians(-90))
+                .build();
 
-        if (gamepad1.aWasPressed()) {
-            switchback.getTurretSub().resetEncoder();
-        }
+        PathChain intakeToShooting = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(136.700, 8.300), new Pose(91.000, 13.600))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(15))
+                .build();
 
-        if (gamepad1.bWasPressed()) {
-            switchback.getTurretSub().setZeroToForwardAngle();
-        }
+        PathChain shootingToLeave = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(91.000, 13.600), new Pose(107.000, 13.600))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(15), Math.toRadians(0))
+                .build();
 
-        ExternalTools.TELEMETRY.addData("Angle", MatchDetails.ZeroToForwardAngle);
+        addAction(
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(5000),
 
-        switchback.write();
-    }
+                new ChangeStateAction(RobotState.INTAKE),
+                new FollowAction(intakeStart1),
+                new FollowAction(intakeFollowThrough),
+                new SleepAction(500),
 
-    @Override
-    public void loop() {
-        switchback.read();
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(intakeToShooting),
+                new SleepAction(700),
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(5000),
 
-        switch (index) {
-            case 0:
-                if (!started) {
-                    switchback.changeState(RobotState.FIRE);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 5000) {
-                    switchback.changeState(RobotState.IDLE);
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-            case 1:
-                if (!started) {
-                    switchback.getFollower().followPath(bhhh);
-                    started = true;
-                }
-
-                if (!switchback.getFollower().isBusy() && !finished) {
-                    finished = true;
-                    elapsedTime.reset();
-                }
-
-                if (finished && elapsedTime.milliseconds() > 500) {
-                    index++;
-                    started = false;
-                    finished = false;
-                }
-                break;
-        }
-
-        switchback.update();
-
-        switchback.write();
-    }
-
-    @Override
-    public void stop() {
-        switchback.setFinalPose();
+                new ChangeStateAction(RobotState.IDLE),
+                new FollowAction(shootingToLeave)
+        );
     }
 }
