@@ -53,7 +53,7 @@ public class BlueCloseAuto extends Auto{
                         new BezierCurve(
                                 new Pose(19.5, 83.600),
                                 new Pose(34, 80.200),
-                                new Pose(21.5, 76.500)
+                                new Pose(21.2, 76.500)
                         )
                 )
                 .setLinearHeadingInterpolation(180, Math.toRadians(180))
@@ -120,7 +120,7 @@ public class BlueCloseAuto extends Auto{
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(11.6, 35.000),
+                                new Pose(9.5, 35.000),
                                 new Pose(29.8, 35.600),
                                 new Pose(50.1, 89.700),
                                 new Pose(64, 105)

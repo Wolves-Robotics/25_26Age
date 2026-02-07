@@ -53,7 +53,7 @@ public class RedCloseAuto extends Auto {
                         new BezierCurve(
                                 new Pose(124.500, 83.600),
                                 new Pose(110.800, 80.200),
-                                new Pose(122.500, 76.500)
+                                new Pose(122.800, 76.500)
                         )
                 )
                 .setLinearHeadingInterpolation(0, Math.toRadians(0))
@@ -78,13 +78,13 @@ public class RedCloseAuto extends Auto {
                         new BezierLine(new Pose(84.900, 98.500), new Pose(93.000, 65.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
-                .setBrakingStart(1.7)
+                .setBrakingStart(1.4)
 
                 .addPath(
                         new BezierLine(new Pose(93.000, 65.000), new Pose(132.40, 59.000))
                 )
                 .setConstantHeadingInterpolation(0)
-                .setBrakingStart(1.8)
+                .setBrakingStart(1.5)
                 .build();
 
         PathChain PGPToShooting = follower
@@ -106,13 +106,13 @@ public class RedCloseAuto extends Auto {
                         new BezierLine(new Pose(84.900, 98.500), new Pose(93.000, 42.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
-                .setBrakingStart(1.7)
+                .setBrakingStart(1.4)
 
                 .addPath(
                         new BezierLine(new Pose(93.000, 42.000), new Pose(132.40, 38))
                 )
                 .setConstantHeadingInterpolation(0)
-                .setBrakingStart(1.8)
+                .setBrakingStart(1.5)
                 .build();
 
         PathChain GPPToShooting = follower

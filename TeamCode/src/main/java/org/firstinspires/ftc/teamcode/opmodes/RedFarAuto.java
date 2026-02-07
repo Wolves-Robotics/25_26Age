@@ -30,25 +30,29 @@ public class RedFarAuto extends Auto {
         PathChain intakeStart1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(93.400, 9.200), new Pose(133.700, 22.500))
+                        new BezierLine(new Pose(93.400, 9.200), new Pose(134.700, 24))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-60))
+                .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-75))
                 .build();
 
         PathChain intakeFollowThrough = follower.
                 pathBuilder().
                 addPath(
-                        new BezierLine(new Pose(133.700, 22.500), new Pose(136.700, 8.300))
+                        new BezierLine(new Pose(134.700, 24), new Pose(134.700, 9.300))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-60), Math.toRadians(-90))
+                .setLinearHeadingInterpolation(Math.toRadians(-75), Math.toRadians(-110))
+                .addPath(
+                        new BezierLine(new Pose(134.700, 9.300), new Pose(134.700, 13.300))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-110))
                 .build();
 
         PathChain intakeToShooting = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(136.700, 8.300), new Pose(91.000, 13.600))
+                        new BezierLine(new Pose(133.700, 13.300), new Pose(91.000, 13.600))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(15))
+                .setLinearHeadingInterpolation(Math.toRadians(-110), Math.toRadians(15))
                 .build();
 
         PathChain shootingToLeave = follower
@@ -60,6 +64,17 @@ public class RedFarAuto extends Auto {
                 .build();
 
         addAction(
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(5000),
+
+                new ChangeStateAction(RobotState.INTAKE),
+                new FollowAction(intakeStart1),
+                new FollowAction(intakeFollowThrough),
+                new SleepAction(500),
+
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(intakeToShooting),
+                new SleepAction(700),
                 new ChangeStateAction(RobotState.FIRE),
                 new SleepAction(5000),
 

@@ -118,10 +118,11 @@ public class Switchback {
                         intake,
                         latch,
                         () -> false,
+                        () -> follower.getPose().getY() < 45,
                         () -> 0.,
                         () -> 0.,
                         flywheelSubsystem::getError,
-                        flywheelSubsystem::getD
+                        flywheelSubsystem::getDistance
                 ));
 
         turretSubsystem.init(

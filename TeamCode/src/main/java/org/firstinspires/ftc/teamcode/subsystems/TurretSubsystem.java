@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.control.TurretPID;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import org.joml.Vector2d;
+import org.opencv.core.Mat;
 
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
@@ -29,14 +30,16 @@ public class TurretSubsystem {
     private final double LIMELIGHTFROMTURRETCENTER = 144.514 / 25.4;
 
     public static boolean tracking = false, prevValid = false;
-    private double targetTicks, power, targetDeg;
+    private double targetTicks, power, targetDeg, integral, prevSig;
 
     private PIDFController tickPID, degreePID;
     private TurretPID llPID;
 
     public static PIDFCoefficients
             tickCoeffs   = new PIDFCoefficients(0.015, 0, 0, 0),
-            degreeCoeffs = new PIDFCoefficients(0.020, 0, 0.0000002, 0);
+            degreeCoeffs = new PIDFCoefficients(0.015, 0.001, 0, 0);
+
+    public static double s = 0.04;
 
     public void init(TurretStuff hardware) {
         this.hardware = hardware;
@@ -44,6 +47,7 @@ public class TurretSubsystem {
         tickPID = new PIDFController(tickCoeffs);
         degreePID = new PIDFController(degreeCoeffs);
         llPID   = new TurretPID(degreeCoeffs);
+        integral = 0;
     }
 
     public void read() {
@@ -83,8 +87,9 @@ public class TurretSubsystem {
 
                 prevValid = false;
             } else {
-                if (!prevValid)
-                    degreePID.reset();
+                if (!prevValid) {
+                    integral = 0;
+                }
                 // tracking from limelight
                 double tx = result.getTx();
 
@@ -98,15 +103,26 @@ public class TurretSubsystem {
                 double theta5 = Math.asin(v);
                 double theta6 = 180 - Math.toDegrees(theta4 + theta5);
 
+                prevSig = Math.signum(targetDeg);
+                
                 targetDeg = theta3 + theta6;
 
 //                llPID.updateCoeffs(degreeCoeffs);
 //                llPID.updateDegreesToTarget(degreesToTarget);
 //                power = llPID.update(!prevValid);
 
-                degreePID.setCoefficients(degreeCoeffs);
-                degreePID.updateError(targetDeg);
-                power = degreePID.run();
+                power = Math.signum(targetDeg) * s;
+                if (Math.abs(targetDeg) > 1)
+                    power += targetDeg * degreeCoeffs.P;
+                
+                if (Math.signum(targetDeg) != prevSig) {
+                    integral = 0;
+                }
+
+                if (Math.abs(targetDeg) > 0.4) {
+                    integral += degreeCoeffs.I;
+                    power += integral * Math.signum(targetDeg);
+                }
 
                 if (ticks > 490) {
                     power = Math.min(power, 0);
@@ -127,6 +143,7 @@ public class TurretSubsystem {
         ExternalTools.TELEMETRY.addData("Target", targetTicks);
         ExternalTools.TELEMETRY.addData("Degrees", targetDeg);
         ExternalTools.TELEMETRY.addData("Power", power);
+        ExternalTools.TELEMETRY.addData("integral", integral);
         ExternalTools.TELEMETRY.addData("Limelight", prevValid);
     }
 

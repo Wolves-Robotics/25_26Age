@@ -20,7 +20,6 @@ public class TestTele extends OpMode {
     public static boolean whyyyyy = false, idekman = false;
 
     private Servo hood;
-    private CRServo park;
 
     @Override
     public void init() {
@@ -34,8 +33,6 @@ public class TestTele extends OpMode {
         hood = hardwareMap.get(Servo.class, "hoodServo");
         hood.setDirection(Servo.Direction.REVERSE);
         hood.setPosition(0);
-
-        park = hardwareMap.get(CRServo.class, "park");
     }
 
     @Override

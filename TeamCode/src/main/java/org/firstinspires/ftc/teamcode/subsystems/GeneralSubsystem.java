@@ -23,7 +23,11 @@ public class GeneralSubsystem {
 
     public void update() {
         if (robotState == RobotState.FIRE) {
-             hardware.intake.setPower(1);
+            if (Math.abs(hardware.velocityError.getAsDouble()) < 80) {
+                hardware.intake.setPower(1);
+            } else {
+                hardware.intake.setPower(0);
+            }
         }
     }
 
@@ -66,6 +70,7 @@ public class GeneralSubsystem {
             DcMotorEx intake,
             Servo latch,
             BooleanSupplier cameraTracking,
+            BooleanSupplier farShot,
             DoubleSupplier tickError,
             DoubleSupplier degreeError,
             DoubleSupplier velocityError,
