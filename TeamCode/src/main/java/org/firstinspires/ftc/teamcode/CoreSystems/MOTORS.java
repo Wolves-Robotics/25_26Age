@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 enum MOTORS{
-    FRONTLEFTDRIVE("FLD",false),
-    FRONTRIGHTDRIVE("FRD",true),
+    FRONTLEFTDRIVE("FLD",true ),
+    FRONTRIGHTDRIVE("FRD",false),
     BACKLEFTDRIVE("BLD",false),
     BACKRIGHTDRIVE("BRD",false),
     INTAKE("intake",true),
-    TURRETMOTOR("turret",false);
-    // LEFTSHOOTERMOTOR("LshooterMotor"),
-    //   RIGHTSHOOTERMOTOR("RshooterMotor");
+    TURRETMOTOR("turret",false),
+    SHOOTER("shooter",false);
+
     private DcMotorEx motor;
     private final Boolean reverse;
     private final String motorName;

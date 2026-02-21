@@ -20,14 +20,19 @@ public class TeleOpthingy extends OpMode {
     public void loop(){
         if (gamepad1.left_bumper){
             Ares.updateBraking(Status.BRAKING);
-        }else{
-            Ares.updateBraking(Status.IDLE);
         }
-        if(gamepad1.a){
+        else if(gamepad1.a){
             Ares.updateStatus(Status.INTAKING);
-        }else{
+        }
+        else if(gamepad1.right_bumper){
+            Ares.updateStatus(Status.REVVINGUP);
+        }else if(gamepad1.x){
+            Ares.updateStatus(Status.OUTTAKE);
+        }
+        else{
             Ares.updateStatus(Status.IDLE);
         }
+
         Ares.doStuff();
     }
 

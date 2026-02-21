@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.CoreSystems;
 
-public enum SERVOS {
+public enum SERVOS{
 }

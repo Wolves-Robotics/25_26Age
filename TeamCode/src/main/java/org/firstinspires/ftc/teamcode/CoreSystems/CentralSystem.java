@@ -28,6 +28,8 @@ public class CentralSystem {
                 MOTORS.BACKLEFTDRIVE.getMotor(),
                 MOTORS.BACKRIGHTDRIVE.getMotor());
 
+        flywheelSub = new FlywheelSubsystem(MOTORS.SHOOTER.getMotor());
+
         intake = MOTORS.INTAKE.getMotor();
     }
     public void updateStatus(Status state){
@@ -36,27 +38,34 @@ public class CentralSystem {
     public void updateBraking(Status state){
         this.brakingState = state;
     }
+    private void STOPEVERYTHINGPLEASE(){
+        intake.setPower(0.0);
+        flywheelSub.STOPPLEASEIBEG();
+    }
     public void doStuff(){
         switch (State){
             case INTAKING:
                 intake.setPower(1.0);
+                flywheelSub.reverse();
                 break;
 
             case REVVINGUP:
-                //rev
+                flywheelSub.testRevUp();
                 break;
 
             case SHOOTING:
-                //shoot
+                flywheelSub.testRevUp();
+                intake.setPower(1.0);
                 break;
             case OUTTAKE:
                 intake.setPower(-1.0);
                 break;
             default:
-                intake.setPower(0.0);
+                this.STOPEVERYTHINGPLEASE();
         }
         driveSub.brakeSwitch(brakingState);
         driveSub.DriveCalculations(player1,RBHW);
+
     }
 
 

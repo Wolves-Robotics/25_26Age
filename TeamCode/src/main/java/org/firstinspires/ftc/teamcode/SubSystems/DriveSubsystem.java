@@ -54,15 +54,11 @@ public class DriveSubsystem {
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
 
-        frontLeftMotor.setPower(frontLeftPower);
-        backLeftMotor.setPower(backLeftPower);
-        frontRightMotor.setPower(frontRightPower);
-        backRightMotor.setPower(backRightPower);
+        frontLeftMotor.setPower(frontLeftPower*Precision);
+        backLeftMotor.setPower(backLeftPower*Precision);
+        frontRightMotor.setPower(frontRightPower*Precision);
+        backRightMotor.setPower(backRightPower*Precision);
 
-        frontLeftMotor.setPower(-gamepad1.left_stick_y);
-        backLeftMotor.setPower(-gamepad1.left_stick_y);
-        frontRightMotor.setPower(-gamepad1.left_stick_y);
-        backRightMotor.setPower(-gamepad1.left_stick_y);
     }
     public void brakeSwitch(Status brakeornottobrake){
         if(brakeornottobrake == Status.BRAKING){
@@ -78,9 +74,9 @@ public class DriveSubsystem {
         }
     }
     public void test(){
-        frontLeftMotor.setPower(1.0);
-        backLeftMotor.setPower(1.0);
-        frontRightMotor.setPower(1.0);
-        backRightMotor.setPower(1.0);
+        frontLeftMotor.setPower(1.0);// front right
+        backLeftMotor.setPower(0.4); // correct
+        frontRightMotor.setPower(0.1); // front left
+        backRightMotor.setPower(0.0); // correct
     }
 }
