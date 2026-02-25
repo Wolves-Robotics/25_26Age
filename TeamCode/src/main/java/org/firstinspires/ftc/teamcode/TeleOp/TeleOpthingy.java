@@ -21,15 +21,16 @@ public class TeleOpthingy extends OpMode {
         if (gamepad1.left_bumper){
             Ares.updateBraking(Status.BRAKING);
         }
-        else if(gamepad1.a){
+          if(gamepad1.a){
             Ares.updateStatus(Status.INTAKING);
         }
         else if(gamepad1.right_bumper){
             Ares.updateStatus(Status.REVVINGUP);
         }else if(gamepad1.x){
             Ares.updateStatus(Status.OUTTAKE);
-        }
-        else{
+        } else if (gamepad1.y) {
+            Ares.updateStatus(Status.SHOOTING);
+          } else{
             Ares.updateStatus(Status.IDLE);
         }
 

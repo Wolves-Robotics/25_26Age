@@ -67,6 +67,9 @@ public class CentralSystem {
         driveSub.DriveCalculations(player1,RBHW);
 
     }
+    public void forward(){
+        driveSub.test();
+    }
 
 
 

@@ -75,8 +75,8 @@ public class DriveSubsystem {
     }
     public void test(){
         frontLeftMotor.setPower(1.0);// front right
-        backLeftMotor.setPower(0.4); // correct
-        frontRightMotor.setPower(0.1); // front left
-        backRightMotor.setPower(0.0); // correct
+        backLeftMotor.setPower(1.0); // correct
+        frontRightMotor.setPower(1.); // front left
+        backRightMotor.setPower(1.); // correct
     }
 }

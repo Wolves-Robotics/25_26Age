@@ -13,7 +13,7 @@ public class FlywheelSubsystem {
         shooter.setPower(1.0);
     }
     public void reverse(){
-        shooter.setPower(-0.6);
+        shooter.setPower(-1.0);
     }
     public void STOPPLEASEIBEG(){
         shooter.setPower(0.0);
