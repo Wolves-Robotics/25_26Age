@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.annotation.SuppressLint;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
@@ -8,13 +10,13 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.control.TurretPID;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import org.joml.Vector2d;
-import org.opencv.core.Mat;
 
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
@@ -29,31 +31,34 @@ public class TurretSubsystem {
     //                                           millimeters / millimeter per inch
     private final double LIMELIGHTFROMTURRETCENTER = 144.514 / 25.4;
 
-    public static boolean tracking = false, prevValid = false;
-    private double targetTicks, power, targetDeg, integral, prevSig;
+    public static boolean tracking = false, prevValid = false, noLimelight = false;
+    private double targetTicks, power, targetDeg, integral, derivative, prevSig, prevDeg, time;
 
-    private PIDFController tickPID, degreePID;
+    private PIDFController degreePID;
     private TurretPID llPID;
 
-    public static PIDFCoefficients
-            tickCoeffs   = new PIDFCoefficients(0.015, 0, 0, 0),
-            degreeCoeffs = new PIDFCoefficients(0.015, 0.001, 0, 0);
+    private ElapsedTime derivativeTime;
 
-    public static double s = 0.04;
+    public static PIDFCoefficients
+            degreeCoeffs = new PIDFCoefficients(0.02, 0.00, 0.0023, 0);
+
+    public static double s = 0.024, tickChange = 17;
 
     public void init(TurretStuff hardware) {
         this.hardware = hardware;
 
-        tickPID = new PIDFController(tickCoeffs);
         degreePID = new PIDFController(degreeCoeffs);
         llPID   = new TurretPID(degreeCoeffs);
         integral = 0;
+
+        derivativeTime = new ElapsedTime();
     }
 
     public void read() {
 
     }
 
+    @SuppressLint("DefaultLocale")
     public void update() {
         tracking = hardware.state.get() == RobotState.SPEED_UP
                 || hardware.state.get() == RobotState.FIRE;
@@ -68,34 +73,66 @@ public class TurretSubsystem {
 
             double ticks = hardware.turretPos.getAsInt();
 
-            if (!result.isValid()) {
-                if (prevValid)
-                    tickPID.reset();
+            double theta2 = Math.atan2(target.y - turret.y, target.x - turret.x);
+            double theta3 = h - theta2;
+
+            targetTicks = (MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0)) * TICKSPERRAD;
+
+            targetTicks = Math.max(Math.min(targetTicks, 490), 10);
+
+            if (!result.isValid() || Math.abs(targetTicks - ticks) > tickChange || noLimelight) {
+
+                prevDeg = targetDeg;
+                prevSig = Math.signum(targetDeg);
+
+                targetDeg = Math.toDegrees((targetTicks - ticks) / TICKSPERRAD);
+
+//                llPID.updateCoeffs(degreeCoeffs);
+//                llPID.updateDegreesToTarget(degreesToTarget);
+//                power = llPID.update(!prevValid);
+
+                time = derivativeTime.seconds();
+                derivativeTime.reset();
+
+                if (!prevValid) {
+                    integral = 0;
+                    time = 0;
+                }
+
+                power = Math.signum(targetDeg) * s;
+                power += targetDeg * degreeCoeffs.P;
+
+                if (Math.signum(targetDeg) != prevSig) {
+                    integral = 0;
+                }
+
+                if (Math.abs(targetDeg) > 0.2) {
+                    integral += degreeCoeffs.I;
+                    power += integral * Math.signum(targetDeg);
+                }
+
+                if (time > 0.0025) {
+                    derivative = (targetDeg - prevDeg) / time;
+                    if (Math.signum(derivative) == Math.signum(targetDeg))
+                        derivative = 0;
+                    power += derivative * degreeCoeffs.D;
+                }
 
                 // tracking from robot position
-                double theta2 = Math.atan2(target.y - turret.y, target.x - turret.x);
-                double theta3 = h - theta2;
-
-                targetTicks = (MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0)) * TICKSPERRAD;
-
-                targetTicks = Math.max(Math.min(targetTicks, 490), 10);
-
-                tickPID.setCoefficients(tickCoeffs);
-                tickPID.updateError(targetTicks - ticks);
-                power = tickPID.run();
+//                tickPID.setCoefficients(tickCoeffs);
+//                tickPID.updateError(targetTicks - ticks);
+//                power = tickPID.run();
+                ExternalTools.LOGGER.info(Double.toString(power));
                 hardware.turretMotor.setPower(power);
 
                 prevValid = false;
             } else {
-                if (!prevValid) {
-                    integral = 0;
-                }
                 // tracking from limelight
                 double tx = result.getTx();
 
                 double theta1 = Math.atan2(target.y - turret.y, target.x - turret.x);
-                double theta2 = Math.atan2(apriltag.y - turret.y, apriltag.x - turret.x);
-                double theta3 = Math.toDegrees(theta2 - theta1);
+                theta2 = Math.atan2(apriltag.y - turret.y, apriltag.x - turret.x);
+                theta3 = Math.toDegrees(theta2 - theta1);
 
                 double theta4 = Math.toRadians(180 - tx);
                 double l1 = Math.hypot(apriltag.y - turret.y, apriltag.x - turret.x);
@@ -103,6 +140,7 @@ public class TurretSubsystem {
                 double theta5 = Math.asin(v);
                 double theta6 = 180 - Math.toDegrees(theta4 + theta5);
 
+                prevDeg = targetDeg;
                 prevSig = Math.signum(targetDeg);
                 
                 targetDeg = theta3 + theta6;
@@ -111,17 +149,31 @@ public class TurretSubsystem {
 //                llPID.updateDegreesToTarget(degreesToTarget);
 //                power = llPID.update(!prevValid);
 
+                time = derivativeTime.seconds();
+                derivativeTime.reset();
+
+                if (!prevValid) {
+                    integral = 0;
+                    time = 0;
+                }
+
                 power = Math.signum(targetDeg) * s;
-                if (Math.abs(targetDeg) > 1)
-                    power += targetDeg * degreeCoeffs.P;
+                power += targetDeg * degreeCoeffs.P;
                 
                 if (Math.signum(targetDeg) != prevSig) {
                     integral = 0;
                 }
 
-                if (Math.abs(targetDeg) > 0.4) {
+                if (Math.abs(targetDeg) > 0.2) {
                     integral += degreeCoeffs.I;
                     power += integral * Math.signum(targetDeg);
+                }
+
+                if (time > 0.0025) {
+                    derivative = (targetDeg - prevDeg) / time;
+                    if (Math.signum(derivative) == Math.signum(targetDeg))
+                        derivative = 0;
+                    power += derivative * degreeCoeffs.D;
                 }
 
                 if (ticks > 490) {
@@ -129,6 +181,7 @@ public class TurretSubsystem {
                 } else if (ticks < 10) {
                     power = Math.max(power, 0);
                 }
+
                 hardware.turretMotor.setPower(power);
 
                 prevValid = true;
@@ -144,6 +197,7 @@ public class TurretSubsystem {
         ExternalTools.TELEMETRY.addData("Degrees", targetDeg);
         ExternalTools.TELEMETRY.addData("Power", power);
         ExternalTools.TELEMETRY.addData("integral", integral);
+        ExternalTools.TELEMETRY.addData("Derivative", derivative);
         ExternalTools.TELEMETRY.addData("Limelight", prevValid);
     }
 

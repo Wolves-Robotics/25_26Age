@@ -19,16 +19,15 @@ import java.util.function.Supplier;
 public class FlywheelSubsystem {
     private final double TURRETFROMCENTERINCH = 57 / 25.4;
 
-
     private FlywheelStuff hardware;
 
     public static boolean isRunning;
-    private double targetVel, angle, vel, distance, p0, p1, error;
+    private double angle, vel, distance, p0, p1, error;
 
     private PIDFController flywheelPIDF;
 
-    public static boolean tuning = false;
-    public static double p = 0.0014, i = 0.1, d = 0, f = 0, v = 0.000385, s = 0.095;
+    public static boolean pidTuning = false, velToPowerTune = false;
+    public static double p = 0.005, i = 0, d = 0, f = 1, targetVel;
 
     public void init(FlywheelStuff hardware) {
         this.hardware = hardware;
@@ -61,7 +60,7 @@ public class FlywheelSubsystem {
 
             if (robot.y < 48) {
                 angle = 53;
-                hardware.hood.setPosition(1);
+                hardware.hood.setPosition(0.8);
             } else {
                 angle = 69;
                 hardware.hood.setPosition(0);
@@ -76,24 +75,25 @@ public class FlywheelSubsystem {
             if (-(2*c)/Math.tan(w) > distance)
                 vel = 0;
 
-            if (!tuning) {
+            if (!pidTuning) {
                 if (robot.y < 45) {
-                    targetVel = 73.17952*vel-893.76537;
+                    targetVel = 12.90487*vel+1520.69207;
                 } else {
-                    targetVel = 0.0877833*Math.pow(vel, 3) - 7.9942*Math.pow(vel, 2) + 275.82606*vel - 2020.93191;
+                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14559.5645);
                 }
             }
 
             error = targetVel - hardware.speed.getAsDouble();
 
-            flywheelPIDF.setPIDF(p, i, d, f);
-            flywheelPIDF.setFeedforward(v, 0, s);
+            flywheelPIDF.setPIDF(p, i, d, 0);
+            flywheelPIDF.setFeedforward(0, 0, 0);
             if (Math.abs(error) < 40) {
                 hardware.controller.rumble(200);
             }
-            double power = flywheelPIDF.calculate(error, targetVel, 0);
+            double power = flywheelPIDF.calculate(error) + (f * velToPower(targetVel));
             if (targetVel == 0) power = 0;
             if (-(2*c)/Math.tan(w) > distance) power = 0;
+            if (velToPowerTune) power = targetVel;
             hardware.motor1.setPower(power);
             hardware.motor2.setPower(power);
         } else {
@@ -103,30 +103,28 @@ public class FlywheelSubsystem {
     }
 
     private double velToPower(double vel) {
-        return (1.37002E-7*vel*vel) - (0.0000599941*vel) + (0.385831);
+        return (3.23839E-10*vel*vel*vel) - (0.00000156572*vel*vel) + (0.00287086*vel) - (1.28892);
     }
 
-    private double velToMotor(double vel) {
-        return (41.905*vel) + 125.98797 + (distance > 115 ? 120:0);
-    }
-
-    public void write(){
+    public void write() {
         ExternalTools.TELEMETRY.addData("Velocity", vel);
         ExternalTools.TELEMETRY.addData("Distance", distance);
-        ExternalTools.TELEMETRY.addData("CurrentVel", hardware.speed.getAsDouble());
         ExternalTools.TELEMETRY.addData("TargetVel", targetVel);
+        ExternalTools.TELEMETRY.addData("CurrentVel", targetVel - error);
+        ExternalTools.TELEMETRY.addData("Error", error);
+        ExternalTools.TELEMETRY.addData("pasdfisadhiofgsdga", velToPower(targetVel));
     }
 
     public double getDistance() {
         return distance;
     }
 
-    public double getTargetVel() {
+    public static double getTargetVel() {
         return targetVel;
     }
 
-    public void setTargetVel(double targetVel) {
-        this.targetVel = targetVel;
+    public static void setTargetVel(double targetVel) {
+        FlywheelSubsystem.targetVel = targetVel;
     }
 
     public double getError() {
@@ -137,6 +135,7 @@ public class FlywheelSubsystem {
             DcMotorEx motor1,
             DcMotorEx motor2,
             DoubleSupplier speed,
+            DoubleSupplier pos,
             Servo hood,
             Follower follower,
             Gamepad controller,

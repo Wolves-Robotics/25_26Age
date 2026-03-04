@@ -23,8 +23,10 @@ public class GeneralSubsystem {
 
     public void update() {
         if (robotState == RobotState.FIRE) {
-            if (Math.abs(hardware.velocityError.getAsDouble()) < 80) {
+            if (!hardware.farShot().getAsBoolean()){
                 hardware.intake.setPower(1);
+            } else if (Math.abs(hardware.velocityError.getAsDouble()) < 400) {
+                hardware.intake.setPower(0.8);
             } else {
                 hardware.intake.setPower(0);
             }
@@ -51,7 +53,7 @@ public class GeneralSubsystem {
             }
             case SPEED_UP -> {
                 hardware.intake.setPower(0);
-                hardware.latch.setPosition(1);
+                hardware.latch.setPosition(0.9);
             }
             case FIRE -> {
                 if (this.robotState != RobotState.SPEED_UP) {

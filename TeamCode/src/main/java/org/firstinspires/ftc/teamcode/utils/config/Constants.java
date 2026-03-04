@@ -16,6 +16,6 @@ public class Constants {
     public static final Vector2d RED_APRILTAG  = new Vector2d(130.34, 130.38);
     public static final Vector2d BLUE_APRILTAG = new Vector2d(13.66 , 130.38);
 
-    public static final Vector2d RED_TARGET_POS =  new Vector2d(137, 138);
-    public static final Vector2d BLUE_TARGET_POS = new Vector2d(7  , 138);
+    public static final Vector2d RED_TARGET_POS =  new Vector2d(138, 138);
+    public static final Vector2d BLUE_TARGET_POS = new Vector2d(6  , 138);
 }

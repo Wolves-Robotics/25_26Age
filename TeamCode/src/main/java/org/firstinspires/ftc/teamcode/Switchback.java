@@ -138,10 +138,12 @@ public class Switchback {
                 new FlywheelSubsystem.FlywheelStuff(
                         flywheelMotor1,
                         flywheelMotor2,
-                        bL::getVelocity, //encoder on bL port idk man
+                        fL::getVelocity,
+                        fL::getCurrentPosition, // encoder on bL port idk man
                         hood,
                         follower,
-                        opMode.gamepad1, generalSubsystem::getRobotState
+                        opMode.gamepad1,
+                        generalSubsystem::getRobotState
                 ));
 
     }

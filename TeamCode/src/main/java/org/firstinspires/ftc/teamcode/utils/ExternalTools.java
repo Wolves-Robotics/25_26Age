@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.utils;
 
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.geometry.Twist2d;
 import com.bylazar.field.FieldManager;
 import com.bylazar.field.PanelsField;
+import com.bylazar.telemetry.JoinedTelemetry;
 import com.bylazar.telemetry.PanelsTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory;
 public class ExternalTools {
     public static Logger LOGGER = LoggerFactory.getLogger("Wolves Robotics");
     public static FieldManager FIELD = PanelsField.INSTANCE.getField();
-    public static MultipleTelemetry TELEMETRY = new MultipleTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry());
+    public static JoinedTelemetry TELEMETRY;
 
     public static void initialize(Telemetry telemetry) {
         FIELD.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
-        TELEMETRY.addTelemetry(telemetry);
+        TELEMETRY = new JoinedTelemetry(telemetry, PanelsTelemetry.INSTANCE.getFtcTelemetry());
     }
 
     public static void write() {

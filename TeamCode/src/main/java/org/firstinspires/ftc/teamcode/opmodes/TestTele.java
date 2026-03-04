@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Switchback;
+import org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
@@ -124,11 +125,11 @@ public class TestTele extends OpMode {
 
 
         if (gamepad1.dpadRightWasPressed()) {
-            switchback.getFlywheelSub().setTargetVel(switchback.getFlywheelSub().getTargetVel() + 20);
+            FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() + 20);
         }
 
         if (gamepad1.dpadLeftWasPressed()) {
-            switchback.getFlywheelSub().setTargetVel(switchback.getFlywheelSub().getTargetVel() - 20);
+            FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);
         }
 
         switchback.update();

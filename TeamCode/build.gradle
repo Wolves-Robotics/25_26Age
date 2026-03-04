@@ -23,17 +23,8 @@ android {
     }
 }
 
-repositories {
-    maven { url "https://frcmaven.wpi.edu/artifactory/release/" }
-}
-
 dependencies {
     implementation project(':FtcRobotController')
-
-    compileOnly "edu.wpi.first.wpimath:wpimath-java:2025.2.1"
-    compileOnly "edu.wpi.first.wpiutil:wpiutil-java:2025.2.1"
-    compileOnly "edu.wpi.first.wpiunits:wpiunits-java:2025.2.1"
-
-    implementation "org.ejml:ejml-simple:0.44.0"
     implementation "org.joml:joml:1.10.8"
+    implementation 'org.ftclib.ftclib:core:2.1.1' // core
 }
