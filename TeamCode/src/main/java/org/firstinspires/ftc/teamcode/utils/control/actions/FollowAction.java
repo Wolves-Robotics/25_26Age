@@ -20,7 +20,7 @@ public class FollowAction extends AutoAction {
                 () -> {
                     follower.followPath(path);
                     elapsedTime = new ElapsedTime();},
-                () -> !follower.isBusy() || elapsedTime.seconds() > 4
+                () -> !follower.isBusy() || elapsedTime.seconds() > 2.5
         );
     }
 

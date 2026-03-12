@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public abstract class Auto extends OpMode {
+public abstract class BaseAuto {
     protected Switchback switchback;
 
     protected Follower follower;
@@ -21,8 +21,7 @@ public abstract class Auto extends OpMode {
     private ArrayList<AutoAction> actionList;
     private int actionIndex;
 
-    @Override
-    public final void init() {
+    public final void init(OpMode opMode) {
         actionList = new ArrayList<>();
         actionIndex = 0;
 
@@ -30,7 +29,7 @@ public abstract class Auto extends OpMode {
         MatchDetails.ALLIANCECOLOR = setColor();
 
         switchback = Switchback.getInstance();
-        switchback.init(this);
+        switchback.init(opMode);
 
         switchback.setPose(setPose());
 
@@ -39,29 +38,10 @@ public abstract class Auto extends OpMode {
         setActionList();
     }
 
-    @Override
-    public final void init_loop() {
-        switchback.read();
-
-        if (gamepad1.aWasPressed()) {
-            switchback.getTurretSub().resetEncoder();
-        }
-
-        if (gamepad1.bWasPressed()) {
-            switchback.getTurretSub().setZeroToForwardAngle();
-        }
-
-        ExternalTools.TELEMETRY.addData("Angle", MatchDetails.zeroToForwardAngle);
-
-        switchback.write();
-    }
-
-    @Override
     public final void start() {
         switchback.getDriveSub().startFollowing();
     }
 
-    @Override
     public final void loop() {
         switchback.read();
 
@@ -82,7 +62,6 @@ public abstract class Auto extends OpMode {
         switchback.write();
     }
 
-    @Override
     public final void stop() {
         switchback.setFinalPose();
     }

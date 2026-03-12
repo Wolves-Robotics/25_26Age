@@ -6,6 +6,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,7 +41,7 @@ public class TurretSubsystem {
     private ElapsedTime derivativeTime;
 
     public static PIDFCoefficients
-            degreeCoeffs = new PIDFCoefficients(0.02, 0.00, 0.0023, 0);
+            degreeCoeffs = new PIDFCoefficients(0.018, 0.00, 0.0024, 0);
 
     public static double s = 0.024, tickChange = 17;
 
@@ -67,9 +68,10 @@ public class TurretSubsystem {
             LLResult result = hardware.limelight.getLatestResult();
 
             Vector2d robot = new Vector2d(hardware.follower.getPose().getX(), hardware.follower.getPose().getY());
-            Vector2d target = MatchDetails.target;
+            Vector2d target = new Vector2d(MatchDetails.target.x, MatchDetails.target.y);
             Vector2d apriltag = MatchDetails.aprilTag;
             Vector2d turret = robot.sub(Math.cos(h) * TURRETFROMCENTERINCH, Math.sin(h) * TURRETFROMCENTERINCH);
+
 
             double ticks = hardware.turretPos.getAsInt();
 
@@ -80,7 +82,7 @@ public class TurretSubsystem {
 
             targetTicks = Math.max(Math.min(targetTicks, 490), 10);
 
-            if (!result.isValid() || Math.abs(targetTicks - ticks) > tickChange || noLimelight) {
+            if ((!result.isValid()) || (Math.abs(targetTicks - ticks) > tickChange) || (noLimelight)) {
 
                 prevDeg = targetDeg;
                 prevSig = Math.signum(targetDeg);
@@ -122,7 +124,6 @@ public class TurretSubsystem {
 //                tickPID.setCoefficients(tickCoeffs);
 //                tickPID.updateError(targetTicks - ticks);
 //                power = tickPID.run();
-                ExternalTools.LOGGER.info(Double.toString(power));
                 hardware.turretMotor.setPower(power);
 
                 prevValid = false;
@@ -215,6 +216,7 @@ public class TurretSubsystem {
             IntSupplier turretPos,
             Follower follower,
             Limelight3A limelight,
-            Supplier<RobotState> state
+            Supplier<RobotState> state,
+            Supplier<Vector> robotVel
     ) {}
 }

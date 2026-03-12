@@ -131,7 +131,8 @@ public class Switchback {
                         turretMotor::getCurrentPosition,
                         follower,
                         limelight,
-                        generalSubsystem::getRobotState
+                        generalSubsystem::getRobotState,
+                        follower::getVelocity
                 ));
 
         flywheelSubsystem.init(
@@ -143,9 +144,9 @@ public class Switchback {
                         hood,
                         follower,
                         opMode.gamepad1,
-                        generalSubsystem::getRobotState
+                        generalSubsystem::getRobotState,
+                        follower::getVelocity
                 ));
-
     }
 
     public void setPose(Pose pose) {

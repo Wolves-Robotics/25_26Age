@@ -11,10 +11,8 @@ import org.firstinspires.ftc.teamcode.utils.control.actions.FollowAction;
 import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
-import org.opencv.core.Mat;
 
-@Autonomous(preselectTeleOp = "TestTele")
-public class BlueFarAuto extends Auto {
+public class BlueFarAuto extends BaseAuto {
     @Override
     public Alliance setColor() {
         return Alliance.BLUE;
@@ -38,13 +36,13 @@ public class BlueFarAuto extends Auto {
         PathChain intakeFollowThrough = follower.
                 pathBuilder().
                 addPath(
-                        new BezierLine(new Pose(9.3, 24), new Pose(9.3, 9.300))
+                        new BezierLine(new Pose(9.3, 24), new Pose(10.8, 10.800))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(255), Math.toRadians(290))
+                .setLinearHeadingInterpolation(Math.toRadians(255), Math.toRadians(280))
                 .addPath(
-                        new BezierLine(new Pose(9.3, 9.300), new Pose(9.3, 13.300))
+                        new BezierLine(new Pose(9.3, 10.800), new Pose(9.3, 13.300))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(290))
+                .setConstantHeadingInterpolation(Math.toRadians(280))
                 .build();
 
         PathChain intakeToShooting = follower
@@ -52,7 +50,7 @@ public class BlueFarAuto extends Auto {
                 .addPath(
                         new BezierLine(new Pose(9.3, 13.300), new Pose(53, 13.600))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(165))
+                .setLinearHeadingInterpolation(Math.toRadians(280), Math.toRadians(165))
                 .build();
 
         PathChain shootingToGPP = follower
@@ -88,7 +86,8 @@ public class BlueFarAuto extends Auto {
 
         addAction(
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(3500),
+                new SleepAction(2000),
+                new ChangeStateAction(RobotState.IDLE),
 
                 new ChangeStateAction(RobotState.INTAKE),
                 new FollowAction(shootingToGPP),
@@ -100,12 +99,13 @@ public class BlueFarAuto extends Auto {
                 new FollowAction(GPPToShooting),
                 new SleepAction(700),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(3000),
+                new SleepAction(1800),
+                new ChangeStateAction(RobotState.IDLE),
 
                 new ChangeStateAction(RobotState.INTAKE),
                 new FollowAction(intakeStart1),
                 new FollowAction(intakeFollowThrough),
-                new SleepAction(500),
+                new SleepAction(1000),
                 new ChangeStateAction(RobotState.IDLE),
                 new SleepAction(250),
 
@@ -113,7 +113,8 @@ public class BlueFarAuto extends Auto {
                 new FollowAction(intakeToShooting),
                 new SleepAction(700),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(3000),
+                new SleepAction(1800),
+                new ChangeStateAction(RobotState.IDLE),
 
                 new ChangeStateAction(RobotState.IDLE),
                 new FollowAction(shootingToLeave)

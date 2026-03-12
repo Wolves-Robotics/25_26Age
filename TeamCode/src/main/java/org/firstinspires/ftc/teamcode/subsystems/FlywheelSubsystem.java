@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -27,7 +28,7 @@ public class FlywheelSubsystem {
     private PIDFController flywheelPIDF;
 
     public static boolean pidTuning = false, velToPowerTune = false;
-    public static double p = 0.005, i = 0, d = 0, f = 1, targetVel;
+    public static double p = 0.004, i = 0, d = 0, f = 1, targetVel;
 
     public void init(FlywheelStuff hardware) {
         this.hardware = hardware;
@@ -77,7 +78,7 @@ public class FlywheelSubsystem {
 
             if (!pidTuning) {
                 if (robot.y < 45) {
-                    targetVel = 12.90487*vel+1520.69207;
+                    targetVel = 12.90487*vel+1510.69207;
                 } else {
                     targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14559.5645);
                 }
@@ -139,6 +140,7 @@ public class FlywheelSubsystem {
             Servo hood,
             Follower follower,
             Gamepad controller,
-            Supplier<RobotState> state
+            Supplier<RobotState> state,
+            Supplier<Vector> robotVel
     ) {}
 }

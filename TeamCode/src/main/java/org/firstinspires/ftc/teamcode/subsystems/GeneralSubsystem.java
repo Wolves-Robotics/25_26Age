@@ -44,8 +44,12 @@ public class GeneralSubsystem {
                 hardware.latch.setPosition(0);
             }
             case INTAKE -> {
-                hardware.intake.setPower(1);
-                hardware.latch.setPosition(0);
+                if (this.robotState == RobotState.SPEED_UP || this.robotState == RobotState.FIRE) {
+                    robotState = this.robotState;
+                } else {
+                    hardware.intake.setPower(1);
+                    hardware.latch.setPosition(0);
+                }
             }
             case OUTTAKE -> {
                 hardware.intake.setPower(-1);
