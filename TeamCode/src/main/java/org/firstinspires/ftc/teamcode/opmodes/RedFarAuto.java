@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.utils.config.Constants;
 import org.firstinspires.ftc.teamcode.utils.control.actions.ChangeStateAction;
@@ -11,80 +12,81 @@ import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
-public class BlueFar1S9B extends BaseAuto {
+public class RedFarAuto extends BaseAuto {
     @Override
-    public Alliance setColor() {
-        return Alliance.BLUE;
+    protected Alliance setColor() {
+        return Alliance.RED;
     }
 
     @Override
     protected Pose setPose() {
-        return Constants.BLUE_FAR_INIT;
+        return Constants.RED_FAR_INIT;
     }
 
     @Override
     protected void setActionList() {
+
         PathChain intakeStart1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(50.6, 9.200), new Pose(9.3, 24))
+                        new BezierLine(new Pose(93.400, 9.200), new Pose(134.700, 24))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(150), Math.toRadians(255))
+                .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-75))
                 .build();
 
         PathChain intakeFollowThrough = follower.
                 pathBuilder().
                 addPath(
-                        new BezierLine(new Pose(9.3, 24), new Pose(10.8, 10.800))
+                        new BezierLine(new Pose(134.700, 24), new Pose(134.700, 9.300))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(255), Math.toRadians(270))
+                .setLinearHeadingInterpolation(Math.toRadians(-75), Math.toRadians(-120))
                 .addPath(
-                        new BezierLine(new Pose(9.3, 10.800), new Pose(9.3, 13.300))
+                        new BezierLine(new Pose(134.700, 9.300), new Pose(134.700, 10.300))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(270))
+                .setConstantHeadingInterpolation(Math.toRadians(-120))
                 .addPath(
-                new BezierLine(new Pose(9.3, 13.300), new Pose(9.3, 9.300))
-        )
-                .setConstantHeadingInterpolation(Math.toRadians(270))
+                        new BezierLine(new Pose(134.700, 10.300), new Pose(134.700, 9.300))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-120))
                 .build();
 
         PathChain intakeToShooting = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(9.3, 13.300), new Pose(53, 13.600))
+                        new BezierLine(new Pose(134.700, 9.300), new Pose(91.000, 13.600))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(165))
+                .setLinearHeadingInterpolation(Math.toRadians(-120), Math.toRadians(15))
                 .build();
 
         PathChain shootingToGPP = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(53, 13.6), new Pose(51, 31))
+                        new BezierLine(new Pose(91, 13.6), new Pose(93.000, 31))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(165), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(15), Math.toRadians(0))
                 .setBrakingStart(1.4)
 
                 .addPath(
-                        new BezierLine(new Pose(51, 31), new Pose(11.6, 35))
+                        new BezierLine(new Pose(93.000, 31), new Pose(132.40, 35))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(0)
                 .setBrakingStart(1.5)
                 .build();
 
         PathChain GPPToShooting = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(11.6, 35), new Pose(53, 13.6))
+                        new BezierLine(new Pose(132.4, 35), new Pose(91, 13.6))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(165))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(15))
                 .build();
 
         PathChain shootingToLeave = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(53, 13.600), new Pose(37, 13.600))
+                        new BezierLine(new Pose(91.000, 13.600), new Pose(107.000, 13.600))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(165), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(15), Math.toRadians(0))
                 .build();
 
         addAction(

@@ -11,87 +11,73 @@ import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
-public class RedFar1S9B extends BaseAuto {
+public class BlueFar0pike extends BaseAuto {
     @Override
-    protected Alliance setColor() {
-        return Alliance.RED;
+    public Alliance setColor() {
+        return Alliance.BLUE;
     }
 
     @Override
     protected Pose setPose() {
-        return Constants.RED_FAR_INIT;
+        return Constants.BLUE_FAR_INIT;
     }
 
     @Override
     protected void setActionList() {
-
         PathChain intakeStart1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(93.400, 9.200), new Pose(134.700, 24))
+                        new BezierLine(new Pose(50.6, 9.200), new Pose(8.5, 9.4))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-75))
-                .build();
-
-        PathChain intakeFollowThrough = follower.
-                pathBuilder().
-                addPath(
-                        new BezierLine(new Pose(134.700, 24), new Pose(134.700, 9.300))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(-75), Math.toRadians(-90))
-                .addPath(
-                        new BezierLine(new Pose(134.700, 9.300), new Pose(134.700, 13.300))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(-90))
-                .addPath(
-                        new BezierLine(new Pose(134.700, 13.300), new Pose(134.700, 9.300))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(-90))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         PathChain intakeToShooting = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(134.700, 9.300), new Pose(91.000, 13.600))
+                        new BezierLine(new Pose(8.5, 9.4), new Pose(50.6, 9.2))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(15))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(165))
+                .build();
+
+        PathChain shootingToLeave = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(53, 13.600), new Pose(37, 13.600))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(165), Math.toRadians(180))
                 .build();
 
         PathChain shootingToGPP = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(91, 13.6), new Pose(93.000, 31))
+                        new BezierLine(new Pose(53, 13.6), new Pose(51, 31))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(15), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(165), Math.toRadians(180))
                 .setBrakingStart(1.4)
 
                 .addPath(
-                        new BezierLine(new Pose(93.000, 31), new Pose(132.40, 35))
+                        new BezierLine(new Pose(51, 31), new Pose(11.6, 35))
                 )
-                .setConstantHeadingInterpolation(0)
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .setBrakingStart(1.5)
                 .build();
 
         PathChain GPPToShooting = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(132.4, 35), new Pose(91, 13.6))
+                        new BezierLine(new Pose(11.6, 35), new Pose(53, 13.6))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(15))
-                .build();
-
-        PathChain shootingToLeave = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(91.000, 13.600), new Pose(107.000, 13.600))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(15), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(165))
                 .build();
 
         addAction(
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new SleepAction(1500),
                 new ChangeStateAction(RobotState.FIRE),
                 new SleepAction(2000),
                 new ChangeStateAction(RobotState.IDLE),
+                new SleepAction(400),
 
                 new ChangeStateAction(RobotState.INTAKE),
                 new FollowAction(shootingToGPP),
@@ -105,10 +91,10 @@ public class RedFar1S9B extends BaseAuto {
                 new ChangeStateAction(RobotState.FIRE),
                 new SleepAction(1800),
                 new ChangeStateAction(RobotState.IDLE),
+                new SleepAction(400),
 
                 new ChangeStateAction(RobotState.INTAKE),
                 new FollowAction(intakeStart1),
-                new FollowAction(intakeFollowThrough),
                 new SleepAction(1000),
                 new ChangeStateAction(RobotState.IDLE),
                 new SleepAction(250),
@@ -119,6 +105,21 @@ public class RedFar1S9B extends BaseAuto {
                 new ChangeStateAction(RobotState.FIRE),
                 new SleepAction(1800),
                 new ChangeStateAction(RobotState.IDLE),
+                new SleepAction(400),
+
+                new ChangeStateAction(RobotState.INTAKE),
+                new FollowAction(intakeStart1),
+                new SleepAction(1000),
+                new ChangeStateAction(RobotState.IDLE),
+                new SleepAction(250),
+
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(intakeToShooting),
+                new SleepAction(700),
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(1800),
+                new ChangeStateAction(RobotState.IDLE),
+                new SleepAction(400),
 
                 new ChangeStateAction(RobotState.IDLE),
                 new FollowAction(shootingToLeave)
