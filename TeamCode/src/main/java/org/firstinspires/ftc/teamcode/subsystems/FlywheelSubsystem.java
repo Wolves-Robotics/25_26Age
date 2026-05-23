@@ -62,9 +62,12 @@ public class FlywheelSubsystem {
             if (robot.y < 48) {
                 angle = 53;
                 hardware.hood.setPosition(0.8);
-            } else {
+            } else if (48 < robot.y && robot.y < 97) {
+                hardware.hood.setPosition(.25);
+
+            }else {
                 angle = 69;
-                hardware.hood.setPosition(0);
+                hardware.hood.setPosition(0.08);
             }
 
             double w = Math.toRadians(angle);

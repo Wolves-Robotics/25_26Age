@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.control.MovingAverageFilter;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class Switchback {
         DcMotorEx bL = initMotor("backLeft", DcMotorSimple.Direction.REVERSE);
         DcMotorEx bR = initMotor("backRight", DcMotorSimple.Direction.FORWARD);
 
-        DcMotorEx turretMotor = initMotor("turretMotor", DcMotorSimple.Direction.REVERSE);
+        DcMotorEx turretMotor = initMotor("turretMotor", DcMotorSimple.Direction.FORWARD);
 
         DcMotorEx flywheelMotor1 = initMotor("flywheelMotor",  DcMotorSimple.Direction.REVERSE);
         DcMotorEx flywheelMotor2 = initMotor("flywheelMotor2", DcMotorSimple.Direction.FORWARD);
@@ -128,7 +129,7 @@ public class Switchback {
         turretSubsystem.init(
                 new TurretSubsystem.TurretStuff(
                         turretMotor,
-                        turretMotor::getCurrentPosition,
+                        bR::getCurrentPosition,
                         follower,
                         limelight,
                         generalSubsystem::getRobotState,
@@ -239,4 +240,5 @@ public class Switchback {
         motor.setDirection(dir);
         return motor;
     }
+
 }
