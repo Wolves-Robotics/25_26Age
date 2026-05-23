@@ -35,6 +35,7 @@ public class TestTele extends OpMode {
     public void init() {
         switchback = Switchback.getInstance();
         switchback.init(this);
+        switchback.getFlywheelSub().setOffset(0);
 
         switchback.setPose(MatchDetails.poseAtStop);
 
@@ -127,6 +128,10 @@ public class TestTele extends OpMode {
             Light.setPosition(.5);
         }else{
             Light.setPosition(1);
+        }
+
+        if (gamepad1.dpadUpWasPressed()) {
+            switchback.switchStatic();
         }
 
         switchback.update();

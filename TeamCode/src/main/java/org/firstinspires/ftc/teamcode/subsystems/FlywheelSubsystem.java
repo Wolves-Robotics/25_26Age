@@ -23,11 +23,11 @@ public class FlywheelSubsystem {
     private FlywheelStuff hardware;
 
     public static boolean isRunning;
-    private double angle, vel, distance, p0, p1, error;
+    private double angle, vel, distance, p0, p1, error, offset;
 
     private PIDFController flywheelPIDF;
 
-    public static boolean pidTuning = false, velToPowerTune = false;
+    public static boolean pidTuning = false, velToPowerTune = false, staticPosition = false;
     public static double p = 0.004, i = 0, d = 0, f = 1, targetVel;
 
     public void init(FlywheelStuff hardware) {
@@ -41,6 +41,8 @@ public class FlywheelSubsystem {
         angle = 69;
         p0 = 14.5;
         p1 = 45;
+
+        offset = 0;
     }
 
     public void read() {
@@ -83,9 +85,12 @@ public class FlywheelSubsystem {
                 if (robot.y < 45) {
                     targetVel = 12.90487*vel+1510.69207;
                 } else {
-                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14559.5645);
+                    targetVel = (-0.254095*vel*vel*vel)+(28.19122*vel*vel)-(983.97715*vel)+(12236.8374);
                 }
             }
+            targetVel += offset;
+
+            if (staticPosition) targetVel = 1500;
 
             error = targetVel - hardware.speed.getAsDouble();
 
@@ -133,6 +138,14 @@ public class FlywheelSubsystem {
 
     public double getError() {
         return error;
+    }
+
+    public void setOffset(double offset) {
+        this.offset = offset;
+    }
+
+    public void setStaticPosition(boolean staticPosition) {
+        FlywheelSubsystem.staticPosition = staticPosition;
     }
 
     public record FlywheelStuff(

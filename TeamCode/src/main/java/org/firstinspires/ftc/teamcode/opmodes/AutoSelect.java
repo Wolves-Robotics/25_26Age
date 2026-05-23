@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Light;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
@@ -15,7 +13,6 @@ import java.util.ArrayList;
 
 @Autonomous(preselectTeleOp = "TestTele")
 public class AutoSelect extends OpMode {
-    public Servo Light;
     private enum Options {
         AUTO("Auto"),
         CONFIG("Config");
@@ -151,10 +148,7 @@ public class AutoSelect extends OpMode {
 
     @Override
     public void loop() {
-        Light = hardwareMap.get(Servo.class, "light");
-        Light.setPosition(1);
         selectedAuto.loop();
-
     }
 
     @Override
@@ -167,6 +161,9 @@ public class AutoSelect extends OpMode {
         switch (auto) {
             case RED_CLOSE -> {
                 switch (closeConfig) {
+                    case ALL_SPIKE_12BALL -> {
+                        return new RedCloseAuto();
+                    }
                     case ALL_SPIKE_15BALL -> {
                         return new RedClose18();
                     }

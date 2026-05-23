@@ -50,6 +50,8 @@ public class Switchback {
     private FlywheelSubsystem flywheelSubsystem;
     private GeneralSubsystem generalSubsystem;
 
+    private boolean staticShoot;
+
 
     public void init(OpMode opMode) {
         ExternalTools.initialize(opMode.telemetry);
@@ -67,6 +69,8 @@ public class Switchback {
         loopTimer = new ElapsedTime();
 
         follower = PedroConstants.createFollower(hardware);
+
+        staticShoot = false;
 
         Limelight3A limelight = hardware.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
@@ -215,6 +219,12 @@ public class Switchback {
         } else {
             generalSubsystem.changeState(RobotState.SPEED_UP);
         }
+    }
+
+    public void switchStatic() {
+        staticShoot = !staticShoot;
+        flywheelSubsystem.setStaticPosition(staticShoot);
+        turretSubsystem.setStaticPosition(staticShoot);
     }
 
     public DriveSubsystem getDriveSub() {
