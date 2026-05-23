@@ -32,7 +32,7 @@ public class TurretSubsystem {
     //                                           millimeters / millimeter per inch
     private final double LIMELIGHTFROMTURRETCENTER = 144.514 / 25.4;
 
-    public static boolean tracking = false, prevValid = false, noLimelight = false;
+    public static boolean tracking = false, prevValid = false, noLimelight = false, staticPos = false;
     private double targetTicks, power, targetDeg, integral, derivative, prevSig, prevDeg, time;
 
     private PIDFController degreePID;
@@ -63,6 +63,7 @@ public class TurretSubsystem {
     public void update() {
         tracking = hardware.state.get() == RobotState.SPEED_UP
                 || hardware.state.get() == RobotState.FIRE;
+//        tracking=true;
         if (tracking) {
             double h = hardware.follower.getHeading();
             LLResult result = hardware.limelight.getLatestResult();
@@ -72,6 +73,13 @@ public class TurretSubsystem {
             Vector2d apriltag = MatchDetails.aprilTag;
             Vector2d turret = robot.sub(Math.cos(h) * TURRETFROMCENTERINCH, Math.sin(h) * TURRETFROMCENTERINCH);
 
+            if (robot.y < 45) {
+                if (target.x > 72) {
+                    target.add(2, 0);
+                } else {
+                    target.sub(2, 0);
+                }
+            }
 
             double ticks = hardware.turretPos.getAsInt();
 
@@ -81,6 +89,8 @@ public class TurretSubsystem {
             targetTicks = (MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0)) * TICKSPERRAD;
 
             targetTicks = Math.max(Math.min(targetTicks, 490), 10);
+
+            if (staticPos) targetTicks = MatchDetails.zeroToForwardAngle * TICKSPERRAD;
 
             if ((!result.isValid()) || (Math.abs(targetTicks - ticks) > tickChange) || (noLimelight)) {
 
@@ -209,6 +219,10 @@ public class TurretSubsystem {
     public void resetEncoder() {
         hardware.turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void setStaticPosition(boolean staticPos) {
+        TurretSubsystem.staticPos = staticPos;
     }
 
     public record TurretStuff(

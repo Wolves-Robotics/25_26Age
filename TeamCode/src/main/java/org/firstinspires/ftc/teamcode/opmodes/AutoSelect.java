@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
-import org.firstinspires.ftc.teamcode.utils.control.actions.AutoAction;
-
-import java.util.ArrayList;
 
 @Autonomous(preselectTeleOp = "TestTele")
 public class AutoSelect extends OpMode {
@@ -90,6 +86,11 @@ public class AutoSelect extends OpMode {
         if (gamepad1.yWasPressed()) {
             selectedAuto = getSelectedAuto();
             selectedAuto.init(this);
+            if (switchback.getFollower().getPose().getY() > 45) {
+                switchback.getFlywheelSub().setOffset(10);
+            } else {
+                switchback.getFlywheelSub().setOffset(0);
+            }
             settingsSet = true;
         }
 
@@ -162,56 +163,62 @@ public class AutoSelect extends OpMode {
             case RED_CLOSE -> {
                 switch (closeConfig) {
                     case ALL_SPIKE_12BALL -> {
-                        return new RedCloseAuto();
+                        return new RedClose3S12B();
                     }
                     case ALL_SPIKE_15BALL -> {
-                        return new RedClose18();
+                        return new RedClose3S15B();
+                    }
+                    case TWO_SPIKE_12BALL -> {
+                        return new RedClose2Spike12Ball();
                     }
                     default -> {
-                        return new RedCloseAuto();
+                        return new RedClose3S12B();
                     }
                 }
             }
             case BLUE_CLOSE -> {
                 switch (closeConfig) {
                     case ALL_SPIKE_12BALL -> {
-                        return new BlueCloseAuto();
+                        return new BlueClose3S12B();
                     }
                     case ALL_SPIKE_15BALL -> {
-                        return new BlueClose18();
+                        return new BlueClose3S15B();
+                    }
+                    case TWO_SPIKE_12BALL -> {
+                        return new BlueClose2Spike12Ball();
                     }
                     default -> {
-                        return new BlueCloseAuto();
+                        return new BlueClose3S12B();
                     }
                 }
             }
             case RED_FAR -> {
                 switch (farConfig) {
                     case ONE_SPIKE_9BALL -> {
-                        return new RedFarAuto();
+                        return new RedFar1S9B();
                     }
 
                     case ONE_SPIKE_12BALL -> {
-                        return new RedFar0pike();
+                        return new RedFar1S12B();
                     }
 
                     default -> {
-                        return new RedFarAuto();
+                        return new RedFar1S9B();
                     }
                 }
             }
             case BLUE_FAR -> {
                 switch (farConfig) {
                     case ONE_SPIKE_9BALL -> {
-                        return new BlueFarAuto();
+                        return new BlueFar1S9B();
                     }
 
-                    case NO_SPIKE_9BALL -> {
-                        return new BlueFar0pike();
+                    case ONE_SPIKE_12BALL -> {
+                        return new BlueFar1S12B();
                     }
 
                     default -> {
-                        return new BlueFarAuto();
+                        return new BlueFar1S9B();
                     }
                 }
             }
