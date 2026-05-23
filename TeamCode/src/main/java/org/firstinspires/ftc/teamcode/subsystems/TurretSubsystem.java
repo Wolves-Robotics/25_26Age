@@ -92,111 +92,49 @@ public class TurretSubsystem {
 
             if (staticPos) targetTicks = MatchDetails.zeroToForwardAngle * TICKSPERRAD;
 
-            if ((!result.isValid()) || (Math.abs(targetTicks - ticks) > tickChange) || (noLimelight)) {
+            prevDeg = targetDeg;
+            prevSig = Math.signum(targetDeg);
 
-                prevDeg = targetDeg;
-                prevSig = Math.signum(targetDeg);
-
-                targetDeg = Math.toDegrees((targetTicks - ticks) / TICKSPERRAD);
+            targetDeg = Math.toDegrees((targetTicks - ticks) / TICKSPERRAD);
 
 //                llPID.updateCoeffs(degreeCoeffs);
 //                llPID.updateDegreesToTarget(degreesToTarget);
 //                power = llPID.update(!prevValid);
 
-                time = derivativeTime.seconds();
-                derivativeTime.reset();
+            time = derivativeTime.seconds();
+            derivativeTime.reset();
 
-                if (!prevValid) {
-                    integral = 0;
-                    time = 0;
-                }
+            if (!prevValid) {
+                integral = 0;
+                time = 0;
+            }
 
-                power = Math.signum(targetDeg) * s;
-                power += targetDeg * degreeCoeffs.P;
+            power = Math.signum(targetDeg) * s;
+            power += targetDeg * degreeCoeffs.P;
 
-                if (Math.signum(targetDeg) != prevSig) {
-                    integral = 0;
-                }
+            if (Math.signum(targetDeg) != prevSig) {
+                integral = 0;
+            }
 
-                if (Math.abs(targetDeg) > 0.2) {
-                    integral += degreeCoeffs.I;
-                    power += integral * Math.signum(targetDeg);
-                }
+            if (Math.abs(targetDeg) > 0.2) {
+                integral += degreeCoeffs.I;
+                power += integral * Math.signum(targetDeg);
+            }
 
-                if (time > 0.0025) {
-                    derivative = (targetDeg - prevDeg) / time;
-                    if (Math.signum(derivative) == Math.signum(targetDeg))
-                        derivative = 0;
-                    power += derivative * degreeCoeffs.D;
-                }
+            if (time > 0.0025) {
+                derivative = (targetDeg - prevDeg) / time;
+                if (Math.signum(derivative) == Math.signum(targetDeg))
+                    derivative = 0;
+                power += derivative * degreeCoeffs.D;
+            }
 
-                // tracking from robot position
+            // tracking from robot position
 //                tickPID.setCoefficients(tickCoeffs);
 //                tickPID.updateError(targetTicks - ticks);
 //                power = tickPID.run();
-                hardware.turretMotor.setPower(power);
+            hardware.turretMotor.setPower(power);
 
-                prevValid = false;
-            } else {
-                // tracking from limelight
-                double tx = result.getTx();
-
-                double theta1 = Math.atan2(target.y - turret.y, target.x - turret.x);
-                theta2 = Math.atan2(apriltag.y - turret.y, apriltag.x - turret.x);
-                theta3 = Math.toDegrees(theta2 - theta1);
-
-                double theta4 = Math.toRadians(180 - tx);
-                double l1 = Math.hypot(apriltag.y - turret.y, apriltag.x - turret.x);
-                double v = Math.max(Math.min(LIMELIGHTFROMTURRETCENTER * Math.sin(theta4) / l1, 1), -1);
-                double theta5 = Math.asin(v);
-                double theta6 = 180 - Math.toDegrees(theta4 + theta5);
-
-                prevDeg = targetDeg;
-                prevSig = Math.signum(targetDeg);
-                
-                targetDeg = theta3 + theta6;
-
-//                llPID.updateCoeffs(degreeCoeffs);
-//                llPID.updateDegreesToTarget(degreesToTarget);
-//                power = llPID.update(!prevValid);
-
-                time = derivativeTime.seconds();
-                derivativeTime.reset();
-
-                if (!prevValid) {
-                    integral = 0;
-                    time = 0;
-                }
-
-                power = Math.signum(targetDeg) * s;
-                power += targetDeg * degreeCoeffs.P;
-                
-                if (Math.signum(targetDeg) != prevSig) {
-                    integral = 0;
-                }
-
-                if (Math.abs(targetDeg) > 0.2) {
-                    integral += degreeCoeffs.I;
-                    power += integral * Math.signum(targetDeg);
-                }
-
-                if (time > 0.0025) {
-                    derivative = (targetDeg - prevDeg) / time;
-                    if (Math.signum(derivative) == Math.signum(targetDeg))
-                        derivative = 0;
-                    power += derivative * degreeCoeffs.D;
-                }
-
-                if (ticks > 490) {
-                    power = Math.min(power, 0);
-                } else if (ticks < 10) {
-                    power = Math.max(power, 0);
-                }
-
-                hardware.turretMotor.setPower(power);
-
-                prevValid = true;
-            }
+            prevValid = false;
         } else {
             hardware.turretMotor.setPower(0);
         }
