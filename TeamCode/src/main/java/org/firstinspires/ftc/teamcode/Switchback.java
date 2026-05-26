@@ -87,7 +87,7 @@ public class Switchback {
         DcMotorEx bL = initMotor("backLeft", DcMotorSimple.Direction.REVERSE);
         DcMotorEx bR = initMotor("backRight", DcMotorSimple.Direction.FORWARD);
 
-        DcMotorEx turretMotor = initMotor("turretMotor", DcMotorSimple.Direction.FORWARD);
+        DcMotorEx intake2 = initMotor("intake2", DcMotorSimple.Direction.FORWARD);
 
         DcMotorEx flywheelMotor1 = initMotor("flywheelMotor",  DcMotorSimple.Direction.REVERSE);
         DcMotorEx flywheelMotor2 = initMotor("flywheelMotor2", DcMotorSimple.Direction.FORWARD);
@@ -117,6 +117,7 @@ public class Switchback {
         generalSubsystem.init(
                 new GeneralSubsystem.GeneralStuff(
                         intake,
+                        intake2,
                         latch,
                         () -> false,
                         () -> follower.getPose().getY() < 45,
@@ -126,15 +127,15 @@ public class Switchback {
                         flywheelSubsystem::getDistance
                 ));
 
-        turretSubsystem.init(
-                new TurretSubsystem.TurretStuff(
-                        turretMotor,
-                        bR::getCurrentPosition,
-                        follower,
-                        limelight,
-                        generalSubsystem::getRobotState,
-                        follower::getVelocity
-                ));
+//        turretSubsystem.init(
+//                new TurretSubsystem.TurretStuff(
+//                        turretMotor,
+//                        () -> -turretMotor.getCurrentPosition(),
+//                        follower,
+//                        limelight,
+//                        generalSubsystem::getRobotState,
+//                        follower::getVelocity
+//                ));
 
         flywheelSubsystem.init(
                 new FlywheelSubsystem.FlywheelStuff(
@@ -183,21 +184,21 @@ public class Switchback {
         follower.updatePose();
 
         driveSubsystem.read();
-        turretSubsystem.read();
+//        turretSubsystem.read();
         flywheelSubsystem.read();
         generalSubsystem.read();
     }
 
     public void update() {
         driveSubsystem.update();
-        turretSubsystem.update();
+//        turretSubsystem.update();
         flywheelSubsystem.update();
         generalSubsystem.update();
     }
 
     public void write() {
         driveSubsystem.write();
-        turretSubsystem.write();
+//        turretSubsystem.write();
         flywheelSubsystem.write();
         generalSubsystem.write();
 

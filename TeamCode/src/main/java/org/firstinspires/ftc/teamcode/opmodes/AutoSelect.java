@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Light;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Switchback;
@@ -132,11 +131,11 @@ public class AutoSelect extends OpMode {
         } else {
             switchback.read();
             if (gamepad1.aWasPressed()) {
-                switchback.getTurretSub().resetEncoder();
+//                switchback.getTurretSub().resetEncoder();
             }
 
             if (gamepad1.bWasPressed()) {
-                switchback.getTurretSub().setZeroToForwardAngle();
+//                switchback.getTurretSub().setZeroToForwardAngle();
             }
 
             ExternalTools.TELEMETRY.addData("Angle", MatchDetails.zeroToForwardAngle);
@@ -151,8 +150,6 @@ public class AutoSelect extends OpMode {
 
     @Override
     public void loop() {
-        Light = hardwareMap.get(Servo.class, "light");
-        Light.setPosition(1);
         selectedAuto.loop();
 
     }

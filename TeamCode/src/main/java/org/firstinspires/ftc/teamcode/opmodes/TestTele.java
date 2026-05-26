@@ -28,41 +28,23 @@ public class TestTele extends OpMode {
 
     private Servo hood;
 
-    private Servo Light;
-    private DigitalChannel DistanceSensor;
+
 
     @Override
     public void init() {
         switchback = Switchback.getInstance();
         switchback.init(this);
-
         switchback.setPose(MatchDetails.poseAtStop);
-
         switchback.getDriveSub().stopFollowing();
-
-
-
         hood = hardwareMap.get(Servo.class, "hoodServo");
-        Light = hardwareMap.get(Servo.class, "light");
-        DistanceSensor = hardwareMap.get(DigitalChannel.class, "Sensor");
-        DistanceSensor.setMode(DigitalChannel.Mode.INPUT);
         hood.setDirection(Servo.Direction.REVERSE);
         hood.setPosition(0);
-        Light.setPosition(1);
     }
 
     @Override
     public void init_loop() {
 
         switchback.read();
-
-        if (gamepad1.aWasPressed()) {
-            switchback.getTurretSub().resetEncoder();
-        }
-
-        if (gamepad1.bWasPressed()) {
-            switchback.getTurretSub().setZeroToForwardAngle();
-        }
 
         ExternalTools.TELEMETRY.addData("Angle", MatchDetails.zeroToForwardAngle);
 
@@ -122,11 +104,6 @@ public class TestTele extends OpMode {
 
         if (gamepad1.dpadLeftWasPressed()) {
             FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);
-        }
-        if(DistanceSensor.getState()){
-            Light.setPosition(.5);
-        }else{
-            Light.setPosition(1);
         }
 
         switchback.update();

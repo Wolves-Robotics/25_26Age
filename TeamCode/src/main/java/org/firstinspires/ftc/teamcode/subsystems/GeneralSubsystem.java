@@ -25,8 +25,10 @@ public class GeneralSubsystem {
         if (robotState == RobotState.FIRE) {
             if (!hardware.farShot().getAsBoolean()){
                 hardware.intake.setPower(1);
+                hardware.intake2.setPower(1);
             } else if (Math.abs(hardware.velocityError.getAsDouble()) < 400) {
-                hardware.intake.setPower(0.8);
+                hardware.intake.setPower(.9);
+                hardware.intake2.setPower(.9);
             } else {
                 hardware.intake.setPower(0);
             }
@@ -41,6 +43,7 @@ public class GeneralSubsystem {
         switch (robotState) {
             case IDLE -> {
                 hardware.intake.setPower(0);
+                hardware.intake2.setPower(0);
                 hardware.latch.setPosition(0);
             }
             case INTAKE -> {
@@ -48,15 +51,18 @@ public class GeneralSubsystem {
                     robotState = this.robotState;
                 } else {
                     hardware.intake.setPower(1);
+                    hardware.intake2.setPower(1);
                     hardware.latch.setPosition(0);
                 }
             }
             case OUTTAKE -> {
                 hardware.intake.setPower(-1);
+                hardware.intake2.setPower(-1);
                 hardware.latch.setPosition(0);
             }
             case SPEED_UP -> {
                 hardware.intake.setPower(0);
+                hardware.intake2.setPower(0);
                 hardware.latch.setPosition(0.9);
             }
             case FIRE -> {
@@ -74,6 +80,7 @@ public class GeneralSubsystem {
 
     public record GeneralStuff(
             DcMotorEx intake,
+            DcMotorEx intake2,
             Servo latch,
             BooleanSupplier cameraTracking,
             BooleanSupplier farShot,
