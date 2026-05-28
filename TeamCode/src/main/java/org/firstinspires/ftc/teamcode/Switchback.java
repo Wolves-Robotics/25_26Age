@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.utils.config.Constants;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.control.MovingAverageFilter;
+import org.firstinspires.ftc.teamcode.utils.control.ShootingWhileMoving;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -49,6 +50,8 @@ public class Switchback {
     private TurretSubsystem turretSubsystem;
     private FlywheelSubsystem flywheelSubsystem;
     private GeneralSubsystem generalSubsystem;
+
+    private ShootingWhileMoving swm;
 
 
     public void init(OpMode opMode) {
@@ -113,6 +116,8 @@ public class Switchback {
         generalSubsystem = new GeneralSubsystem();
         turretSubsystem = new TurretSubsystem();
         flywheelSubsystem = new FlywheelSubsystem();
+
+        swm = new ShootingWhileMoving(follower);
 
         generalSubsystem.init(
                 new GeneralSubsystem.GeneralStuff(
@@ -194,6 +199,8 @@ public class Switchback {
 //        turretSubsystem.update();
         flywheelSubsystem.update();
         generalSubsystem.update();
+
+        swm.update();
     }
 
     public void write() {
@@ -201,6 +208,8 @@ public class Switchback {
 //        turretSubsystem.write();
         flywheelSubsystem.write();
         generalSubsystem.write();
+
+        swm.write();
 
         ExternalTools.TELEMETRY.addData("Average Loop Hz", averageHz.update(1000/loopTimer.milliseconds()));
         ExternalTools.write();

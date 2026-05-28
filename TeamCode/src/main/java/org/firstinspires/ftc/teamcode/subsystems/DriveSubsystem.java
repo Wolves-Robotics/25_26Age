@@ -92,7 +92,9 @@ public class DriveSubsystem {
     public void write() {
         double  x = hardware.follower().getPose().getX(),
                 y = hardware.follower().getPose().getY(),
-                h = hardware.follower().getHeading();
+                h = hardware.follower().getHeading(),
+                vx = hardware.follower().getVelocity().getXComponent(),
+                vy = hardware.follower().getVelocity().getYComponent();
 
         ExternalTools.drawRobot(
                 new Pose2D(
@@ -106,6 +108,8 @@ public class DriveSubsystem {
         ExternalTools.TELEMETRY.addData("X", x);
         ExternalTools.TELEMETRY.addData("Y", y);
         ExternalTools.TELEMETRY.addData("Heading", h);
+        ExternalTools.TELEMETRY.addData("VX", vx);
+        ExternalTools.TELEMETRY.addData("VY", vy);
     }
 
     private record driveTrainPower(
