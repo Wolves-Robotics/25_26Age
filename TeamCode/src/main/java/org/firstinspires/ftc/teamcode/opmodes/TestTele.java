@@ -4,14 +4,20 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Light;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import org.joml.Vector2d;
+import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
+import org.opencv.core.Mat;
+
 
 @Configurable
 @TeleOp
@@ -22,16 +28,14 @@ public class TestTele extends OpMode {
 
     private Servo hood;
 
+
+
     @Override
     public void init() {
         switchback = Switchback.getInstance();
         switchback.init(this);
-        switchback.getFlywheelSub().setOffset(0);
-
         switchback.setPose(MatchDetails.poseAtStop);
-
         switchback.getDriveSub().stopFollowing();
-
         hood = hardwareMap.get(Servo.class, "hoodServo");
         hood.setDirection(Servo.Direction.REVERSE);
         hood.setPosition(0);
@@ -39,15 +43,8 @@ public class TestTele extends OpMode {
 
     @Override
     public void init_loop() {
+
         switchback.read();
-
-        if (gamepad1.aWasPressed()) {
-            switchback.getTurretSub().resetEncoder();
-        }
-
-        if (gamepad1.bWasPressed()) {
-            switchback.getTurretSub().setZeroToForwardAngle();
-        }
 
         ExternalTools.TELEMETRY.addData("Angle", MatchDetails.zeroToForwardAngle);
 
@@ -65,20 +62,6 @@ public class TestTele extends OpMode {
         );
 
         switchback.read();
-
-
-//        if (gamepad1.aWasPressed()) {
-//            switchback.getDriveSub().toggleFollowing();
-//
-//            switchback.getDriveSub().setPath(
-//                    new Path(new BezierLine(
-//                            switchback.getDriveSub().getCurrentPose(),
-//                            switchback.getDriveSub().getCurrentPose().plus(
-//                                    new Pose(10, 20)
-//                            )
-//                    ))
-//            );
-//        }
 
 
         if (gamepad1.right_trigger > 0.75 && !whyyyyy) {
@@ -116,25 +99,11 @@ public class TestTele extends OpMode {
         }
 
 
-//        if (gamepad1.dpadUpWasPressed()) {
-//            park.setPower(-1);
-//        } else if (gamepad1.dpadDownWasPressed()) {
-//            park.setPower(1);
-//        } else if (gamepad1.dpadUpWasReleased() || gamepad1.dpadDownWasReleased()){
-//            park.setPower(0);
-//        }
-
-
         if (gamepad1.dpadRightWasPressed()) {
-            FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() + 20);
-        }
+            FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);        }
 
         if (gamepad1.dpadLeftWasPressed()) {
             FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);
-        }
-
-        if (gamepad1.dpadUpWasPressed()) {
-            switchback.switchStatic();
         }
 
         switchback.update();

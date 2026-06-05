@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
+import org.firstinspires.ftc.teamcode.utils.control.actions.AutoAction;
+
+import java.util.ArrayList;
 
 @Autonomous(preselectTeleOp = "TestTele")
 public class AutoSelect extends OpMode {
+    public Servo Light;
     private enum Options {
         AUTO("Auto"),
         CONFIG("Config");
@@ -86,11 +92,6 @@ public class AutoSelect extends OpMode {
         if (gamepad1.yWasPressed()) {
             selectedAuto = getSelectedAuto();
             selectedAuto.init(this);
-            if (switchback.getFollower().getPose().getY() > 45) {
-                switchback.getFlywheelSub().setOffset(10);
-            } else {
-                switchback.getFlywheelSub().setOffset(0);
-            }
             settingsSet = true;
         }
 
@@ -130,11 +131,11 @@ public class AutoSelect extends OpMode {
         } else {
             switchback.read();
             if (gamepad1.aWasPressed()) {
-                switchback.getTurretSub().resetEncoder();
+//                switchback.getTurretSub().resetEncoder();
             }
 
             if (gamepad1.bWasPressed()) {
-                switchback.getTurretSub().setZeroToForwardAngle();
+//                switchback.getTurretSub().setZeroToForwardAngle();
             }
 
             ExternalTools.TELEMETRY.addData("Angle", MatchDetails.zeroToForwardAngle);
@@ -150,6 +151,7 @@ public class AutoSelect extends OpMode {
     @Override
     public void loop() {
         selectedAuto.loop();
+
     }
 
     @Override
@@ -162,63 +164,54 @@ public class AutoSelect extends OpMode {
         switch (auto) {
             case RED_CLOSE -> {
                 switch (closeConfig) {
-                    case ALL_SPIKE_12BALL -> {
-                        return new RedClose3S12B();
-                    }
                     case ALL_SPIKE_15BALL -> {
-                        return new RedClose3S15B();
-                    }
-                    case TWO_SPIKE_12BALL -> {
-                        return new RedClose2Spike12Ball();
+                        return new RedClose18();
                     }
                     default -> {
-                        return new RedClose3S12B();
+                        return new RedCloseAuto();
                     }
                 }
             }
             case BLUE_CLOSE -> {
                 switch (closeConfig) {
                     case ALL_SPIKE_12BALL -> {
-                        return new BlueClose3S12B();
+                        return new BlueCloseAuto();
                     }
                     case ALL_SPIKE_15BALL -> {
-                        return new BlueClose3S15B();
-                    }
-                    case TWO_SPIKE_12BALL -> {
-                        return new BlueClose2Spike12Ball();
+                        return new BlueClose18();
                     }
                     default -> {
-                        return new BlueClose3S12B();
+                        return new BlueCloseAuto();
                     }
                 }
             }
             case RED_FAR -> {
                 switch (farConfig) {
                     case ONE_SPIKE_9BALL -> {
-                        return new RedFar1S9B();
+                        return new RedFarAuto();
                     }
 
                     case ONE_SPIKE_12BALL -> {
-                        return new RedFar1S12B();
+                        return new RedFar0pike();
                     }
 
                     default -> {
-                        return new RedFar1S9B();
+                        return new RedFarAuto();
                     }
                 }
             }
             case BLUE_FAR -> {
                 switch (farConfig) {
                     case ONE_SPIKE_9BALL -> {
-                        return new BlueFar1S9B();
+                        return new BlueFarAuto();
                     }
 
-                    case ONE_SPIKE_12BALL -> {
-                        return new BlueFar1S12B();
+                    case NO_SPIKE_9BALL -> {
+                        return new BlueFar0pike();
                     }
 
                     default -> {
-                        return new BlueFar1S9B();
+                        return new BlueFarAuto();
                     }
                 }
             }

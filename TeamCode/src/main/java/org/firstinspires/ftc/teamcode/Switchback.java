@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.control.MovingAverageFilter;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import java.util.List;
 
@@ -49,8 +50,6 @@ public class Switchback {
     private FlywheelSubsystem flywheelSubsystem;
     private GeneralSubsystem generalSubsystem;
 
-    private boolean staticShoot;
-
 
     public void init(OpMode opMode) {
         ExternalTools.initialize(opMode.telemetry);
@@ -68,8 +67,6 @@ public class Switchback {
         loopTimer = new ElapsedTime();
 
         follower = PedroConstants.createFollower(hardware);
-
-        staticShoot = false;
 
         Limelight3A limelight = hardware.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
@@ -90,7 +87,7 @@ public class Switchback {
         DcMotorEx bL = initMotor("backLeft", DcMotorSimple.Direction.REVERSE);
         DcMotorEx bR = initMotor("backRight", DcMotorSimple.Direction.FORWARD);
 
-        DcMotorEx turretMotor = initMotor("turretMotor", DcMotorSimple.Direction.REVERSE);
+        DcMotorEx intake2 = initMotor("intake2", DcMotorSimple.Direction.FORWARD);
 
         DcMotorEx flywheelMotor1 = initMotor("flywheelMotor",  DcMotorSimple.Direction.REVERSE);
         DcMotorEx flywheelMotor2 = initMotor("flywheelMotor2", DcMotorSimple.Direction.FORWARD);
@@ -120,6 +117,7 @@ public class Switchback {
         generalSubsystem.init(
                 new GeneralSubsystem.GeneralStuff(
                         intake,
+                        intake2,
                         latch,
                         () -> false,
                         () -> follower.getPose().getY() < 45,
@@ -129,15 +127,15 @@ public class Switchback {
                         flywheelSubsystem::getDistance
                 ));
 
-        turretSubsystem.init(
-                new TurretSubsystem.TurretStuff(
-                        turretMotor,
-                        turretMotor::getCurrentPosition,
-                        follower,
-                        limelight,
-                        generalSubsystem::getRobotState,
-                        follower::getVelocity
-                ));
+//        turretSubsystem.init(
+//                new TurretSubsystem.TurretStuff(
+//                        turretMotor,
+//                        () -> -turretMotor.getCurrentPosition(),
+//                        follower,
+//                        limelight,
+//                        generalSubsystem::getRobotState,
+//                        follower::getVelocity
+//                ));
 
         flywheelSubsystem.init(
                 new FlywheelSubsystem.FlywheelStuff(
@@ -186,21 +184,21 @@ public class Switchback {
         follower.updatePose();
 
         driveSubsystem.read();
-        turretSubsystem.read();
+//        turretSubsystem.read();
         flywheelSubsystem.read();
         generalSubsystem.read();
     }
 
     public void update() {
         driveSubsystem.update();
-        turretSubsystem.update();
+//        turretSubsystem.update();
         flywheelSubsystem.update();
         generalSubsystem.update();
     }
 
     public void write() {
         driveSubsystem.write();
-        turretSubsystem.write();
+//        turretSubsystem.write();
         flywheelSubsystem.write();
         generalSubsystem.write();
 
@@ -218,12 +216,6 @@ public class Switchback {
         } else {
             generalSubsystem.changeState(RobotState.SPEED_UP);
         }
-    }
-
-    public void switchStatic() {
-        staticShoot = !staticShoot;
-        flywheelSubsystem.setStaticPosition(staticShoot);
-        turretSubsystem.setStaticPosition(staticShoot);
     }
 
     public DriveSubsystem getDriveSub() {
@@ -249,4 +241,5 @@ public class Switchback {
         motor.setDirection(dir);
         return motor;
     }
+
 }
