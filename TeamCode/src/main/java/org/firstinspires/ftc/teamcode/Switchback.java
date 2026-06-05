@@ -88,7 +88,7 @@ public class Switchback {
         DcMotorEx intake2 = initMotor("intake2", DcMotorSimple.Direction.FORWARD);
 
         Servo turret = hardware.get(Servo.class, "turret");
-        turret.setPosition(0);
+//        turret.setPosition(0);
 
         Servo hood = hardware.get(Servo.class, "hoodServo");
         hood.setDirection(Servo.Direction.REVERSE);
@@ -129,15 +129,14 @@ public class Switchback {
                         flywheelSubsystem::getDistance
                 ));
 
-//        turretSubsystem.init(
-//                new TurretSubsystem.TurretStuff(
-//                        turretMotor,
-//                        () -> -turretMotor.getCurrentPosition(),
-//                        follower,
-//                        limelight,
-//                        generalSubsystem::getRobotState,
-//                        follower::getVelocity
-//                ));
+        turretSubsystem.init(
+                new TurretSubsystem.TurretStuff(
+                        turret,
+                        () -> 0,
+                        follower,
+                        generalSubsystem::getRobotState,
+                        follower::getVelocity
+                ));
 
         flywheelSubsystem.init(
                 new FlywheelSubsystem.FlywheelStuff(
@@ -186,21 +185,21 @@ public class Switchback {
         follower.updatePose();
 
         driveSubsystem.read();
-//        turretSubsystem.read();
+        turretSubsystem.read();
         flywheelSubsystem.read();
         generalSubsystem.read();
     }
 
     public void update() {
         driveSubsystem.update();
-//        turretSubsystem.update();
+        turretSubsystem.update();
         flywheelSubsystem.update();
         generalSubsystem.update();
     }
 
     public void write() {
         driveSubsystem.write();
-//        turretSubsystem.write();
+        turretSubsystem.write();
         flywheelSubsystem.write();
         generalSubsystem.write();
 
