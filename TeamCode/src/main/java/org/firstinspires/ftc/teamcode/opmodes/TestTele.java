@@ -27,6 +27,9 @@ public class TestTele extends OpMode {
     public static boolean whyyyyy = false, idekman = false;
 
     private Servo hood;
+    private Servo intakeLift;
+    private Servo turret;
+
 
 
 
@@ -39,6 +42,8 @@ public class TestTele extends OpMode {
         hood = hardwareMap.get(Servo.class, "hoodServo");
         hood.setDirection(Servo.Direction.REVERSE);
         hood.setPosition(0);
+        intakeLift = hardwareMap.get(Servo.class, "intakeLift");
+
     }
 
     @Override
@@ -100,10 +105,13 @@ public class TestTele extends OpMode {
 
 
         if (gamepad1.dpadRightWasPressed()) {
-            FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);        }
-
+            FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);
+        }
         if (gamepad1.dpadLeftWasPressed()) {
             FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);
+        }
+        if(gamepad1.dpadUpWasPressed()){
+            intakeLift.setPosition(0.4);
         }
 
         switchback.update();

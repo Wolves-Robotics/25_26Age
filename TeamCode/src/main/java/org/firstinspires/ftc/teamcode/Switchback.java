@@ -68,39 +68,40 @@ public class Switchback {
 
         follower = PedroConstants.createFollower(hardware);
 
-        Limelight3A limelight = hardware.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(100);
-        limelight.start();
-
         if (MatchDetails.ALLIANCECOLOR == Alliance.RED) {
             MatchDetails.target = Constants.RED_TARGET_POS;
             MatchDetails.aprilTag = Constants.RED_APRILTAG;
-            limelight.pipelineSwitch(1);
         } else {
             MatchDetails.target = Constants.BLUE_TARGET_POS;
             MatchDetails.aprilTag = Constants.BLUE_APRILTAG;
-            limelight.pipelineSwitch(0);
         }
 
+        //HARDWARE CONTAINER
         DcMotorEx fL = initMotor("frontLeft", DcMotorSimple.Direction.REVERSE);
         DcMotorEx fR = initMotor("frontRight", DcMotorSimple.Direction.FORWARD);
         DcMotorEx bL = initMotor("backLeft", DcMotorSimple.Direction.REVERSE);
         DcMotorEx bR = initMotor("backRight", DcMotorSimple.Direction.FORWARD);
-
-        DcMotorEx intake2 = initMotor("intake2", DcMotorSimple.Direction.FORWARD);
-
+       //Shooter + Intake Class
         DcMotorEx flywheelMotor1 = initMotor("flywheelMotor",  DcMotorSimple.Direction.REVERSE);
         DcMotorEx flywheelMotor2 = initMotor("flywheelMotor2", DcMotorSimple.Direction.FORWARD);
+        DcMotorEx intake = initMotor("intakeMotor", DcMotorSimple.Direction.REVERSE);
+        DcMotorEx intake2 = initMotor("intake2", DcMotorSimple.Direction.FORWARD);
+
+        Servo turret = hardware.get(Servo.class, "turret");
+        turret.setPosition(0);
 
         Servo hood = hardware.get(Servo.class, "hoodServo");
         hood.setDirection(Servo.Direction.REVERSE);
         hood.setPosition(0);
 
-        DcMotorEx intake = initMotor("intakeMotor", DcMotorSimple.Direction.REVERSE);
+        Servo intakeLift = hardware.get(Servo.class, "intakeLift");
+        intakeLift.setDirection(Servo.Direction.REVERSE);
+        intakeLift.setPosition(0);
 
         Servo latch = hardware.get(Servo.class, "latch");
         latch.setPosition(0);
 
+        //END HARDWARE CONTAINER
         driveSubsystem = new DriveSubsystem(
                 new DriveSubsystem.DriveStuff(
                     fL,
@@ -119,7 +120,8 @@ public class Switchback {
                         intake,
                         intake2,
                         latch,
-                        () -> false,
+                        intakeLift,
+                        ()-> false,
                         () -> follower.getPose().getY() < 45,
                         () -> 0.,
                         () -> 0.,
