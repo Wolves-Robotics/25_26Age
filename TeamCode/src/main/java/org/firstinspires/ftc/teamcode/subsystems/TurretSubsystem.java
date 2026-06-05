@@ -66,11 +66,11 @@ public class TurretSubsystem {
 //        tracking=true;
         if (tracking) {
             double h = hardware.follower.getHeading();
-            LLResult result = hardware.limelight.getLatestResult();
+//            LLResult result = hardware.limelight.getLatestResult();
 
             Vector2d robot = new Vector2d(hardware.follower.getPose().getX(), hardware.follower.getPose().getY());
             Vector2d target = new Vector2d(MatchDetails.target.x, MatchDetails.target.y);
-            Vector2d apriltag = MatchDetails.aprilTag;
+//            Vector2d apriltag = MatchDetails.aprilTag;
             Vector2d turret = robot.sub(Math.cos(h) * TURRETFROMCENTERINCH, Math.sin(h) * TURRETFROMCENTERINCH);
 
             if (robot.y < 45) {
@@ -81,60 +81,63 @@ public class TurretSubsystem {
                 }
             }
 
-            double ticks = hardware.turretPos.getAsInt();
+//            double ticks = hardware.turretPos.getAsInt();
 
             double theta2 = Math.atan2(target.y - turret.y, target.x - turret.x);
             double theta3 = h - theta2;
 
-            targetTicks = (MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0)) * TICKSPERRAD;
+            double angle = MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0);
 
-            targetTicks = Math.max(Math.min(targetTicks, 490), 10);
+            double minAngle = -(3*Math.PI)/4, maxAngle = (3*Math.PI)/4, minServoPos = 0.2, maxServoPos = 0.8;
+            double servoPos = ((angle-minAngle)/(maxAngle-minAngle)) * (maxServoPos-minServoPos) + minServoPos;
 
-            if (staticPos) targetTicks = MatchDetails.zeroToForwardAngle * TICKSPERRAD;
-
-            prevDeg = targetDeg;
-            prevSig = Math.signum(targetDeg);
-
-            targetDeg = Math.toDegrees((targetTicks - ticks) / TICKSPERRAD);
+//            targetTicks = Math.max(Math.min(targetTicks, 490), 10);
+//
+//            if (staticPos) targetTicks = MatchDetails.zeroToForwardAngle * TICKSPERRAD;
+//
+//            prevDeg = targetDeg;
+//            prevSig = Math.signum(targetDeg);
+//
+//            targetDeg = Math.toDegrees((targetTicks - ticks) / TICKSPERRAD);
 
 //                llPID.updateCoeffs(degreeCoeffs);
 //                llPID.updateDegreesToTarget(degreesToTarget);
 //                power = llPID.update(!prevValid);
 
-            time = derivativeTime.seconds();
-            derivativeTime.reset();
+//            time = derivativeTime.seconds();
+//            derivativeTime.reset();
+//
+//            if (!prevValid) {
+//                integral = 0;
+//                time = 0;
+//            }
+//
+//            power = Math.signum(targetDeg) * s;
+//            power += targetDeg * degreeCoeffs.P;
+//
+//            if (Math.signum(targetDeg) != prevSig) {
+//                integral = 0;
+//            }
+//
+//            if (Math.abs(targetDeg) > 0.2) {
+//                integral += degreeCoeffs.I;
+//                power += integral * Math.signum(targetDeg);
+//            }
+//
+//            if (time > 0.0025) {
+//                derivative = (targetDeg - prevDeg) / time;
+//                if (Math.signum(derivative) == Math.signum(targetDeg))
+//                    derivative = 0;
+//                power += derivative * degreeCoeffs.D;
+//            }
+//
+//            // tracking from robot position
+////                tickPID.setCoefficients(tickCoeffs);
+////                tickPID.updateError(targetTicks - ticks);
+////                power = tickPID.run();
+//            hardware.turretMotor.setPower(power);
 
-            if (!prevValid) {
-                integral = 0;
-                time = 0;
-            }
-
-            power = Math.signum(targetDeg) * s;
-            power += targetDeg * degreeCoeffs.P;
-
-            if (Math.signum(targetDeg) != prevSig) {
-                integral = 0;
-            }
-
-            if (Math.abs(targetDeg) > 0.2) {
-                integral += degreeCoeffs.I;
-                power += integral * Math.signum(targetDeg);
-            }
-
-            if (time > 0.0025) {
-                derivative = (targetDeg - prevDeg) / time;
-                if (Math.signum(derivative) == Math.signum(targetDeg))
-                    derivative = 0;
-                power += derivative * degreeCoeffs.D;
-            }
-
-            // tracking from robot position
-//                tickPID.setCoefficients(tickCoeffs);
-//                tickPID.updateError(targetTicks - ticks);
-//                power = tickPID.run();
-            hardware.turretMotor.setPower(power);
-
-            prevValid = false;
+//            prevValid = false;
         } else {
             hardware.turretMotor.setPower(0);
         }
