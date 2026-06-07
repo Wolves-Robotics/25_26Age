@@ -58,6 +58,21 @@ public class ShootingWhileMoving {
         }
     }
 
+    public double getEffectiveDistance() {
+        if (v_p < 1e-3) return 0.0;
+
+        double vTowardGoal = Math.sqrt(Math.max(0.0, v_p * v_p - vPerp * vPerp)) - vPar;
+
+        if (vTowardGoal < 1e-3) return 0.0;
+
+        double rawDistance = Math.hypot(
+                MatchDetails.target.x - (follower.getPose().getX() + Math.cos(follower.getHeading()) * TURRET_OFFSET_INCHES),
+                MatchDetails.target.y - (follower.getPose().getY() + Math.sin(follower.getHeading()) * TURRET_OFFSET_INCHES)
+        );
+
+        return rawDistance * (v_p / vTowardGoal);
+    }
+
 
     public void update() {
 

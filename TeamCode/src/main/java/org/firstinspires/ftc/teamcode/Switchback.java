@@ -153,7 +153,8 @@ public class Switchback {
                         follower,
                         opMode.gamepad1,
                         generalSubsystem::getRobotState,
-                        follower::getVelocity
+                        follower::getVelocity,
+                        swm::getEffectiveDistance
                 ));
     }
 
@@ -198,19 +199,19 @@ public class Switchback {
     public void update() {
         driveSubsystem.update();
         turretSubsystem.update();
+        swm.update();
         flywheelSubsystem.update();
         generalSubsystem.update();
 
-        swm.update();
     }
 
     public void write() {
         driveSubsystem.write();
         turretSubsystem.write();
+        swm.write();
         flywheelSubsystem.write();
         generalSubsystem.write();
 
-        swm.write();
 
         ExternalTools.TELEMETRY.addData("Average Loop Hz", averageHz.update(1000/loopTimer.milliseconds()));
         ExternalTools.write();

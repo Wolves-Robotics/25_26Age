@@ -54,7 +54,9 @@ public class FlywheelSubsystem {
             double h = hardware.follower.getHeading();
             Vector2d robot = new Vector2d(hardware.follower.getPose().getX(), hardware.follower.getPose().getY());
             Vector2d turret = robot.sub(Math.cos(h) * TURRETFROMCENTERINCH, Math.sin(h) * TURRETFROMCENTERINCH);
-            distance = Math.hypot(
+
+            double swmDist = hardware.effectiveDistance.getAsDouble();
+            distance = (swmDist > 1e-3) ? swmDist : Math.hypot(
                     MatchDetails.target.x - turret.x,
                     MatchDetails.target.y - turret.y
             );
@@ -144,6 +146,7 @@ public class FlywheelSubsystem {
             Follower follower,
             Gamepad controller,
             Supplier<RobotState> state,
-            Supplier<Vector> robotVel
+            Supplier<Vector> robotVel,
+            DoubleSupplier effectiveDistance
     ) {}
 }
