@@ -3,9 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Light;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Switchback;
@@ -15,8 +12,6 @@ import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import org.joml.Vector2d;
-import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
-import org.opencv.core.Mat;
 
 
 @Configurable
@@ -110,8 +105,11 @@ public class TestTele extends OpMode {
         if (gamepad1.dpadLeftWasPressed()) {
             FlywheelSubsystem.setTargetVel(FlywheelSubsystem.getTargetVel() - 20);
         }
-        if(gamepad1.dpadUpWasPressed()){
-            intakeLift.setPosition(0.4);
+        if(gamepad1.dpadDownWasPressed()){
+            intakeLift.setPosition(0.33);
+        }
+        if(gamepad1.dpadLeftWasPressed()){
+
         }
 
         switchback.update();

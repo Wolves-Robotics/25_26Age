@@ -39,8 +39,7 @@ public class AutoSelect extends OpMode {
 
     private enum CloseConfig {
         ALL_SPIKE_12BALL("3 Spikes, 12 Balls"),
-        ALL_SPIKE_15BALL("3 Spikes, 15 Balls"),
-        ALL_SPIKE_18BALL("3 Spikes, 18 Balls"),
+        ALL_SPIKE_15BALL("3 Spikes, 18 Balls"),
         TWO_SPIKE_12BALL("2 Spikes, 12 Balls"),
         TWO_SPIKE_15BALL("2 Spikes, 15 Balls");
 

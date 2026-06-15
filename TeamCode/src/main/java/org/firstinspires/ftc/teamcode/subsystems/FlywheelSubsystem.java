@@ -63,7 +63,7 @@ public class FlywheelSubsystem {
 
             if (robot.y < 48) {
                 angle = 53;
-                hardware.hood.setPosition(0.8);
+                hardware.hood.setPosition(0.86);
             } else if (48 < robot.y && robot.y < 97) {
                 hardware.hood.setPosition(.25);
 
@@ -83,9 +83,9 @@ public class FlywheelSubsystem {
 
             if (!pidTuning) {
                 if (robot.y < 45) {
-                    targetVel = 12.90487*vel+1510.69207;
+                    targetVel = 12.45*vel+1510.69207;
                 } else {
-                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14559.5645);
+                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14568.9);
                 }
             }
 
