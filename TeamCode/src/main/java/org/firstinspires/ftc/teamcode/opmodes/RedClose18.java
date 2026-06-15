@@ -149,14 +149,14 @@ public class RedClose18 extends BaseAuto {
 
                 new ChangeStateAction(RobotState.INTAKE),
                 new FollowAction(openTunnel, () -> follower.getPose().getX() > 127.0),
-                new SleepAction(400),
+                new SleepAction(100),
                 new FollowAction(tunnelIntake),
                 new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
                 new SleepAction(250),
 
                 new ChangeStateAction(RobotState.SPEED_UP),
-                new FollowAction(tunnelToShoot, () -> follower.getPose().getX() < 96.5),
+                new FollowAction(tunnelToShoot, () -> follower.getPose().getX() < 94),
                 new SleepAction(1000),
                 new ChangeStateAction(RobotState.FIRE),
                 new SleepAction(500),

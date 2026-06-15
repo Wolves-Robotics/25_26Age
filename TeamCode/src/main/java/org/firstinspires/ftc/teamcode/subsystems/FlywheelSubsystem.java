@@ -81,9 +81,9 @@ public class FlywheelSubsystem {
 
             if (!pidTuning) {
                 if (robot.y < 45) {
-                    targetVel = 12.4*vel+1510.69207;
+                    targetVel = 12.45*vel+1510.69207;
                 } else {
-                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14559.5645);
+                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14568.9);
                 }
             }
 

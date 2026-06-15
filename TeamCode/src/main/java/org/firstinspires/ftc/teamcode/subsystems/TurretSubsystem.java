@@ -56,19 +56,19 @@ public class TurretSubsystem {
             if (isFar) {
                 if(MatchDetails.ALLIANCECOLOR == Alliance.BLUE){
                     //if far blue, adjust target 13 inches to the right
-                    target.add(13, 0);
+                    target.add(18, 4);
                 }else{
                     //if far red, adjust target 5 inches to the left
-                    target.sub(5, 0);
+                    target.sub(18, 4);
                 }
 
             } else {
                 if(MatchDetails.ALLIANCECOLOR == Alliance.BLUE){
                     //if close blue, adjust target up 4 inches
-                    target.add(0, 4);
+//                    target.add(0, 4);
                 }else{
                     //if close red, adjust target 4 inches to the right
-                    target.add(5, 0);
+//                    target.add(18, 0);
                 }
 
             }
@@ -81,7 +81,7 @@ public class TurretSubsystem {
             double angle = MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0);
 
 
-            double minAngle = -1.91986, maxAngle = 1.5708, minServoPos = 0, maxServoPos = 0.58;
+            double minAngle = -1.91986, maxAngle = 1.91986, minServoPos = 0, maxServoPos = 0.59;
             double servoPos = ((angle-minAngle)/(maxAngle-minAngle)) * (maxServoPos-minServoPos) + minServoPos;
 
 

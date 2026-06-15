@@ -27,8 +27,8 @@ public class GeneralSubsystem {
                 hardware.intake.setPower(1);
                 hardware.intake2.setPower(1);
             } else if (Math.abs(hardware.velocityError.getAsDouble()) < 400) {
-                hardware.intake.setPower(.9);
-                hardware.intake2.setPower(.9);
+                hardware.intake.setPower(.8);
+                hardware.intake2.setPower(.8);
             } else {
                 hardware.intake.setPower(0);
             }
@@ -54,7 +54,7 @@ public class GeneralSubsystem {
                     hardware.intake.setPower(1);
                     hardware.intake2.setPower(1);
                     hardware.latch.setPosition(0);
-                    hardware.intakeLift.setPosition(.33);
+                    hardware.intakeLift.setPosition(.3);
                 }
             }
             case OUTTAKE -> {
