@@ -1,18 +1,25 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+
 import android.annotation.SuppressLint;
+
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.Servo;
 
+
+import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
+import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import org.joml.Vector2d;
 
+
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+
 
 @Configurable
 public class TurretSubsystem {
@@ -25,9 +32,12 @@ public class TurretSubsystem {
         this.hardware = hardware;
     }
 
+
     public void read() {
 
+
     }
+
 
     @SuppressLint("DefaultLocale")
     public void update() {
@@ -40,28 +50,49 @@ public class TurretSubsystem {
             Vector2d target = new Vector2d(MatchDetails.target.x, MatchDetails.target.y);
             Vector2d turret = robot.sub(Math.cos(h) * TURRETFROMCENTERINCH, Math.sin(h) * TURRETFROMCENTERINCH);
 
-            if (robot.y < 45) {
-                if (target.x > 72) {
-                    target.add(2, 0);
-                } else {
-                    target.sub(2, 0);
+            boolean isFar = robot.y < 45;
+
+
+            if (isFar) {
+                if(MatchDetails.ALLIANCECOLOR == Alliance.BLUE){
+                    //if far blue, adjust target 13 inches to the right
+                    target.add(13, 0);
+                }else{
+                    //if far red, adjust target 5 inches to the left
+                    target.sub(5, 0);
                 }
+
+            } else {
+                if(MatchDetails.ALLIANCECOLOR == Alliance.BLUE){
+                    //if close blue, adjust target up 4 inches
+                    target.add(0, 4);
+                }else{
+                    //if close red, adjust target 4 inches to the right
+                    target.add(5, 0);
+                }
+
             }
+
 
             double theta2 = Math.atan2(target.y - turret.y, target.x - turret.x);
             double theta3 = h - theta2;
 
+
             double angle = MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0);
 
-            double minAngle = -(3*Math.PI)/4, maxAngle = (3*Math.PI)/4, minServoPos = 0, maxServoPos = 0.6;
+
+            double minAngle = -1.91986, maxAngle = 1.5708, minServoPos = 0, maxServoPos = 0.58;
             double servoPos = ((angle-minAngle)/(maxAngle-minAngle)) * (maxServoPos-minServoPos) + minServoPos;
 
+
             hardware.turret.setPosition(Math.max(Math.min(servoPos, maxServoPos), minServoPos));
+
 
         } else {
             hardware.turret.setPosition(.32);
         }
     }
+
 
     public void write() {
     }
@@ -70,6 +101,7 @@ public class TurretSubsystem {
     public void setStaticPosition(boolean staticPos) {
         TurretSubsystem.staticPos = staticPos;
     }
+
 
     public record TurretStuff(
             Servo turret,

@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.PedroConstants;
@@ -96,7 +98,7 @@ public class Switchback {
 
         Servo intakeLift = hardware.get(Servo.class, "intakeLift");
         intakeLift.setDirection(Servo.Direction.REVERSE);
-        intakeLift.setPosition(0);
+//        intakeLift.setPosition(0);
 
         Servo latch = hardware.get(Servo.class, "latch");
         latch.setPosition(0);

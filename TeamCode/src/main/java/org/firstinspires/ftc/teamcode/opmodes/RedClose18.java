@@ -26,14 +26,11 @@ public class RedClose18 extends BaseAuto {
 
     @Override
     protected void setActionList() {
-        Pose shootingPose = new Pose(96.000, 86.000);
+        Pose shootingPose = new Pose(96.000, 83.000);
 
         PathChain startToShoot = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(120.000, 127.700),
+                        new BezierLine(new Pose(120.000, 127.700), shootingPose)
 
-                                shootingPose
-                        )
                 ).setLinearHeadingInterpolation(Math.toRadians(37), Math.toRadians(0))
 
                 .build();
@@ -132,9 +129,9 @@ public class RedClose18 extends BaseAuto {
         addAction(
                 new ChangeStateAction(RobotState.SPEED_UP),
                 new FollowAction(startToShoot, () -> follower.getPose().getY() < 86.5),
-                new SleepAction(1000),
+                new SleepAction(830),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(800),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 new ChangeStateAction(RobotState.INTAKE),
@@ -147,14 +144,14 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(secToShoot, () -> follower.getPose().getX() < 96.5),
                 new SleepAction(1000),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(1000),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 new ChangeStateAction(RobotState.INTAKE),
                 new FollowAction(openTunnel, () -> follower.getPose().getX() > 127.0),
                 new SleepAction(400),
                 new FollowAction(tunnelIntake),
-                new SleepAction(1000),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
                 new SleepAction(250),
 
@@ -162,7 +159,7 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(tunnelToShoot, () -> follower.getPose().getX() < 96.5),
                 new SleepAction(1000),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(1000),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 new ChangeStateAction(RobotState.INTAKE),
@@ -175,7 +172,7 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(thirdToShoot, () -> follower.getPose().getX() < 96.5),
                 new SleepAction(1000),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(800),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 new ChangeStateAction(RobotState.INTAKE),
@@ -188,7 +185,7 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(firstToShoot, () -> follower.getPose().getX() < 96.5),
                 new SleepAction(1000),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(1000),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE)
         );
     }

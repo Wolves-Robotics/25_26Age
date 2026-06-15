@@ -54,7 +54,7 @@ public class GeneralSubsystem {
                     hardware.intake.setPower(1);
                     hardware.intake2.setPower(1);
                     hardware.latch.setPosition(0);
-                    hardware.intakeLift.setPosition(.4);
+                    hardware.intakeLift.setPosition(.33);
                 }
             }
             case OUTTAKE -> {
@@ -66,7 +66,7 @@ public class GeneralSubsystem {
             case SPEED_UP -> {
                 hardware.intake.setPower(0);
                 hardware.intake2.setPower(0);
-                hardware.latch.setPosition(0.9);
+                hardware.latch.setPosition(1);
                 hardware.intakeLift.setPosition(0);
             }
             case FIRE -> {
