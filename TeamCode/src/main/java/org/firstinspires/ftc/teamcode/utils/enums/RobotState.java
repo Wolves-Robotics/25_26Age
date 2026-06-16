@@ -5,5 +5,6 @@ public enum RobotState {
     INTAKE,
     OUTTAKE,
     SPEED_UP,
-    FIRE
+    FIRE,
+    CLEAR
 }
