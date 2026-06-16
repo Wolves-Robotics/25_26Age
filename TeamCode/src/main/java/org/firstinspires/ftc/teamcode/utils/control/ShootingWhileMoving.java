@@ -99,8 +99,8 @@ public class ShootingWhileMoving {
         double ay = follower.getAcceleration().getYComponent();
 
         // turret angle offset with center of rotation of robo
-        double turretX = robotX + Math.cos(heading) * TURRET_OFFSET_INCHES;
-        double turretY = robotY + Math.sin(heading) * TURRET_OFFSET_INCHES;
+        double turretX = robotX - Math.cos(heading) * TURRET_OFFSET_INCHES;
+        double turretY = robotY - Math.sin(heading) * TURRET_OFFSET_INCHES;
 
         // Raw angle
         double dx = MatchDetails.target.x - turretX;
