@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Vector;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -28,6 +29,8 @@ public class FlywheelSubsystem {
     private PIDFController flywheelPIDF;
 
     public static boolean pidTuning = false, velToPowerTune = false;
+    public InterpLUT flywheelVelocityRegression;
+    public InterpLUT hoodAngleRegression;
     public static double p = 0.004, i = 0, d = 0, f = 1, targetVel;
 
     public void init(FlywheelStuff hardware) {
@@ -41,6 +44,23 @@ public class FlywheelSubsystem {
         angle = 69;
         p0 = 14.5;
         p1 = 45;
+
+        flywheelVelocityRegression = new InterpLUT();
+        flywheelVelocityRegression.add(0,0);
+        flywheelVelocityRegression.add(5,0);
+        flywheelVelocityRegression.add(10,0);
+        flywheelVelocityRegression.add(15,0);
+        flywheelVelocityRegression.add(20,0);
+        flywheelVelocityRegression.add(25,0);
+        flywheelVelocityRegression.add(30,0);
+        flywheelVelocityRegression.add(35,0);
+        flywheelVelocityRegression.add(40,0);
+        flywheelVelocityRegression.add(45,0);
+        flywheelVelocityRegression.add(50, 0);
+        flywheelVelocityRegression.add(55, 0);
+        flywheelVelocityRegression.add(60,0);
+        flywheelVelocityRegression.add(65, 0);
+        flywheelVelocityRegression.add(70,0);
     }
 
     public void read() {
@@ -58,7 +78,7 @@ public class FlywheelSubsystem {
                     MatchDetails.target.x - turret.x,
                     MatchDetails.target.y - turret.y
             );
-
+            /*
             if (robot.y < 48) {
                 angle = 53;
                 hardware.hood.setPosition(0.86);
@@ -85,7 +105,9 @@ public class FlywheelSubsystem {
                 } else {
                     targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14568.9);
                 }
-            }
+            }*/
+
+            targetVel = flywheelVelocityRegression.get(distance);
 
             error = targetVel - hardware.speed.getAsDouble();
 
@@ -96,7 +118,7 @@ public class FlywheelSubsystem {
             }
             double power = flywheelPIDF.calculate(error) + (f * velToPower(targetVel));
             if (targetVel == 0) power = 0;
-            if (-(2*c)/Math.tan(w) > distance) power = 0;
+//            if (-(2*c)/Math.tan(w) > distance) power = 0;
             if (velToPowerTune) power = targetVel;
             hardware.motor1.setPower(power);
             hardware.motor2.setPower(power);

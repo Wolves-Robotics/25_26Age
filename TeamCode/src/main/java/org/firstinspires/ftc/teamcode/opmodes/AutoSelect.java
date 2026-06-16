@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,9 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.ExternalTools;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
-import org.firstinspires.ftc.teamcode.utils.control.actions.AutoAction;
-
-import java.util.ArrayList;
 
 @Autonomous(preselectTeleOp = "TestTele")
 public class AutoSelect extends OpMode {
@@ -167,7 +163,7 @@ public class AutoSelect extends OpMode {
                         return new RedClose18();
                     }
                     default -> {
-                        return new RedCloseAuto();
+                        return new RedClose12();
                     }
                 }
             }

@@ -54,7 +54,7 @@ public class GeneralSubsystem {
                     hardware.intake.setPower(1);
                     hardware.intake2.setPower(1);
                     hardware.latch.setPosition(0);
-                    hardware.intakeLift.setPosition(.3);
+                    hardware.intakeLift.setPosition(.33);
                 }
             }
             case OUTTAKE -> {
@@ -72,6 +72,13 @@ public class GeneralSubsystem {
             case FIRE -> {
                 if (this.robotState != RobotState.SPEED_UP) {
                     robotState = this.robotState;
+                }
+            }
+            case CLEAR -> {
+                if(this.robotState != RobotState.INTAKE){
+                    robotState = this.robotState;
+                }else{
+                    hardware.intakeLift.setPosition(.33);
                 }
             }
         }

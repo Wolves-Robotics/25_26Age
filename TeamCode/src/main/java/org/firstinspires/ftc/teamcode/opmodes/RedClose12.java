@@ -4,7 +4,6 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.utils.config.Constants;
 import org.firstinspires.ftc.teamcode.utils.control.actions.ChangeStateAction;
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
-public class RedCloseAuto extends BaseAuto {
+public class RedClose12 extends BaseAuto {
     @Override
     protected Alliance setColor() {
         return Alliance.RED;
