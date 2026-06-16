@@ -31,9 +31,9 @@ public class ShootingWhileMoving {
         phi: raw static angle *rad
         vPerp: lat vel to goal
         vPar: radi vel to goal
-        v_p: hori projectile speed
+        v_projectile: hori projectile speed
      */
-    private double turretAngleDeg, leadAngleDeg, phi, vPerp, vPar, v_p = 0;
+    private double turretAngleDeg, leadAngleDeg, phi, vPerp, vPar, v_projectile = 0;
 
     public ShootingWhileMoving(Follower follower) {
         this.follower = follower;
@@ -59,9 +59,9 @@ public class ShootingWhileMoving {
     }
 
     public double getEffectiveDistance() {
-        if (v_p < 1e-3) return 0.0;
+        if (v_projectile < 1e-3) return 0.0;
 
-        double vTowardGoal = Math.sqrt(Math.max(0.0, v_p * v_p - vPerp * vPerp)) - vPar;
+        double vTowardGoal = Math.sqrt(Math.max(0.0, v_projectile * v_projectile - vPerp * vPerp)) - vPar;
 
         if (vTowardGoal < 1e-3) return 0.0;
 
@@ -70,7 +70,7 @@ public class ShootingWhileMoving {
                 MatchDetails.target.y - (follower.getPose().getY() + Math.sin(follower.getHeading()) * TURRET_OFFSET_INCHES)
         );
 
-        return rawDistance * (v_p / vTowardGoal);
+        return rawDistance * (v_projectile / vTowardGoal);
     }
 
 
@@ -116,12 +116,12 @@ public class ShootingWhileMoving {
         vPerp = -Vx * Math.sin(phi) + Vy * Math.cos(phi);
 
         // HZ projectile speed
-        v_p = projectileSpeed(FlywheelSubsystem.getTargetVel(), robotY);
+        v_projectile = projectileSpeed(FlywheelSubsystem.getTargetVel(), robotY);
 
         // shiiii extra angle moving???
         double leadAngleRad = 0;
-        if (v_p > 1e-3) { //when spin = true
-            double sinAlpha = vPerp / v_p;
+        if (v_projectile > 1e-3) { //when spin = true
+            double sinAlpha = vPerp / v_projectile;
             sinAlpha    = Math.max(-1.0, Math.min(1.0, sinAlpha)); // clamp
             leadAngleRad = Math.asin(sinAlpha);
         }
@@ -139,7 +139,7 @@ public class ShootingWhileMoving {
         ExternalTools.TELEMETRY.addData("[SWM] LOS Angle    (deg)",  Math.toDegrees(phi));
         ExternalTools.TELEMETRY.addData("[SWM] v_perp (in/s)",       vPerp);
         ExternalTools.TELEMETRY.addData("[SWM] v_par  (in/s)",       vPar);
-        ExternalTools.TELEMETRY.addData("[SWM] v_p    (in/s)",       v_p);
+        ExternalTools.TELEMETRY.addData("[SWM] v_p    (in/s)", v_projectile);
         ExternalTools.TELEMETRY.addData("[SWM] Loop dt (ms)",        measuredLoopDt * 1000.0);
         ExternalTools.TELEMETRY.addData("[SWM] t_pipeline (ms)",
                 (measuredLoopDt + T_SERVO_SETTLE) * 1000.0);

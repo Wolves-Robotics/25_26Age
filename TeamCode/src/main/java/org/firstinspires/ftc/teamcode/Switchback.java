@@ -200,8 +200,8 @@ public class Switchback {
 
     public void update() {
         driveSubsystem.update();
-        turretSubsystem.update();
         swm.update();
+        turretSubsystem.update();
         flywheelSubsystem.update();
         generalSubsystem.update();
 
@@ -209,8 +209,8 @@ public class Switchback {
 
     public void write() {
         driveSubsystem.write();
-        turretSubsystem.write();
         swm.write();
+        turretSubsystem.write();
         flywheelSubsystem.write();
         generalSubsystem.write();
 
