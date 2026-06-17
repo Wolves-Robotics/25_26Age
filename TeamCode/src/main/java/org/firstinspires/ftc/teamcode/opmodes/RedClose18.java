@@ -119,7 +119,7 @@ public class RedClose18 extends BaseAuto {
                 new ChangeStateAction(RobotState.SPEED_UP),
                 new FollowAction(FirstShotSOTM),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(450),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //2nd Spike Mark
@@ -140,7 +140,7 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(GateShot),
                 new SleepAction(450),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(450),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //2nd Gate
@@ -151,7 +151,7 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(GateShot),
                 new SleepAction(450),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(450),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //1st Spike
@@ -160,6 +160,9 @@ public class RedClose18 extends BaseAuto {
                 new ChangeStateAction(RobotState.SPEED_UP),
                 new SleepAction(500),
                 new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(450),
+                new ChangeStateAction(RobotState.IDLE),
+
 
                 //3rd Gate
                 new ChangeStateAction(RobotState.INTAKE),
