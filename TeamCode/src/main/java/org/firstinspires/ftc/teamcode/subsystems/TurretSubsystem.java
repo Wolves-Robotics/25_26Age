@@ -10,8 +10,8 @@ import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-import org.firstinspires.ftc.teamcode.Switchback;
 import org.firstinspires.ftc.teamcode.utils.config.MatchDetails;
+import org.firstinspires.ftc.teamcode.utils.control.ShootingWhileMoving;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 import org.joml.Vector2d;
@@ -75,7 +75,7 @@ public class TurretSubsystem {
 
 
             double theta2 = Math.atan2(target.y - turret.y, target.x - turret.x);
-            double theta3 = h - theta2;
+            double theta3 = hardware.swm.getTurretAngleDeg();
 
 
             double angle = MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0);
@@ -108,6 +108,7 @@ public class TurretSubsystem {
             IntSupplier turretPos,
             Follower follower,
             Supplier<RobotState> state,
-            Supplier<Vector> robotVel
+            Supplier<Vector> robotVel,
+            ShootingWhileMoving swm
     ) {}
 }

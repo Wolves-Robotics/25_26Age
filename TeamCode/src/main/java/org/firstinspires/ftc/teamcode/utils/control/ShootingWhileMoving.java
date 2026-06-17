@@ -21,7 +21,8 @@ public class ShootingWhileMoving {
     // Turret pivot offset from robot center along heading axis
     private static final double TURRET_OFFSET_INCHES = 57.0 / 25.4;
 
-    private final Follower follower;
+    private Follower follower;
+    private FlywheelSubsystem flywheel;
 
     // latency
     private long   lastTimeNs      = 0;
@@ -35,27 +36,9 @@ public class ShootingWhileMoving {
      */
     private double turretAngleDeg, leadAngleDeg, phi, vPerp, vPar, v_projectile = 0;
 
-    public ShootingWhileMoving(Follower follower) {
+    public ShootingWhileMoving(Follower follower, FlywheelSubsystem flywheel) {
         this.follower = follower;
-    }
-
-    /*
-        Do sum physics lab shi with ts to get horizontal velocity or smth
-        Different hood positions requires their own regression due to differnt ejection angles.
-     */
-    private double projectileSpeed(double targetVel, double robotY) {
-        // insert regression for all positions of shooter pzl
-
-        if (follower.getPose().getY() < 48) {
-
-            return 0.0;
-        } else if (48 < follower.getPose().getY() && follower.getPose().getY() < 97) {
-
-            return 0.0;
-        }   else {
-
-            return 0.0;
-        }
+        this.flywheel = flywheel;
     }
 
     public double getEffectiveDistance() {
@@ -116,7 +99,7 @@ public class ShootingWhileMoving {
         vPerp = -Vx * Math.sin(phi) + Vy * Math.cos(phi);
 
         // HZ projectile speed
-        v_projectile = projectileSpeed(FlywheelSubsystem.getTargetVel(), robotY);
+        v_projectile = flywheel.v_projectileRegression.get(getEffectiveDistance());
 
         // shiiii extra angle moving???
         double leadAngleRad = 0;

@@ -33,6 +33,9 @@ public class FlywheelSubsystem {
     public InterpLUT hoodAngleRegression;
     public static double p = 0.004, i = 0, d = 0, f = 1, targetVel;
 
+    public InterpLUT v_projectileRegression;
+
+
     public void init(FlywheelStuff hardware) {
         this.hardware = hardware;
 
@@ -61,6 +64,24 @@ public class FlywheelSubsystem {
         flywheelVelocityRegression.add(60,0);
         flywheelVelocityRegression.add(65, 0);
         flywheelVelocityRegression.add(70,0);
+        flywheelVelocityRegression.createLUT();
+
+
+        v_projectileRegression = new InterpLUT();
+        v_projectileRegression.add(0,0);
+        v_projectileRegression.add(5,0);
+        v_projectileRegression.add(10,0);
+        v_projectileRegression.add(15,0);
+        v_projectileRegression.add(20,0);
+        v_projectileRegression.add(25,0);
+        v_projectileRegression.add(30,0);
+        v_projectileRegression.add(45,0);
+        v_projectileRegression.add(50,0);
+        v_projectileRegression.add(55,0);
+        v_projectileRegression.add(60,0);
+        v_projectileRegression.add(65,0);
+        v_projectileRegression.add(70,0);
+        v_projectileRegression.createLUT();
     }
 
     public void read() {
@@ -157,6 +178,14 @@ public class FlywheelSubsystem {
 
     public double getError() {
         return error;
+    }
+
+    /**
+    * Do sum physics lab shi with ts to get horizontal velocity or smth
+    * Different hood positions requires their own regression due to differnt ejection angles.
+    */
+    public double projectileSpeed(double distance) {
+        return v_projectileRegression.get(distance);
     }
 
     public record FlywheelStuff(

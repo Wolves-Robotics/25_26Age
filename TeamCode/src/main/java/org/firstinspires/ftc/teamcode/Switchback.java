@@ -120,7 +120,7 @@ public class Switchback {
         turretSubsystem = new TurretSubsystem();
         flywheelSubsystem = new FlywheelSubsystem();
 
-        swm = new ShootingWhileMoving(follower);
+        swm = new ShootingWhileMoving(follower, flywheelSubsystem);
 
         generalSubsystem.init(
                 new GeneralSubsystem.GeneralStuff(
@@ -142,7 +142,8 @@ public class Switchback {
                         () -> 0,
                         follower,
                         generalSubsystem::getRobotState,
-                        follower::getVelocity
+                        follower::getVelocity,
+                        swm
                 ));
 
         flywheelSubsystem.init(
